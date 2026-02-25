@@ -5,17 +5,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Clock, BookOpen } from 'lucide-react';
 
-import takbeerImg from '@/assets/namaz/takbeer.png';
-import qiyamImg from '@/assets/namaz/qiyam.png';
-import rukuImg from '@/assets/namaz/ruku.png';
-import sujudImg from '@/assets/namaz/sujud.png';
-import tashahhudImg from '@/assets/namaz/tashahhud.png';
-import salamImg from '@/assets/namaz/salam.png';
 
 interface PrayerStep {
   id: number;
   name: { en: string; ar: string; ur: string };
-  image: string;
   description: { en: string; ar: string; ur: string };
   dua: { arabic: string; transliteration: string; translation: { en: string; ur: string } };
 }
@@ -24,7 +17,7 @@ const prayerSteps: PrayerStep[] = [
   {
     id: 1,
     name: { en: 'Takbeer (Opening)', ar: 'تكبيرة الإحرام', ur: 'تکبیرِ تحریمہ' },
-    image: takbeerImg,
+    
     description: {
       en: 'Stand facing the Qibla. Raise both hands up to the ears (men) or shoulders (women) and say "Allahu Akbar". Then fold hands — right hand over left wrist — below the navel (men) or on the chest (women).',
       ar: 'قف مواجهًا القبلة. ارفع يديك حذو أذنيك (للرجل) أو الكتفين (للمرأة) وقل "الله أكبر". ثم ضع اليد اليمنى على اليسرى تحت السرة (للرجل) أو على الصدر (للمرأة).',
@@ -42,7 +35,7 @@ const prayerSteps: PrayerStep[] = [
   {
     id: 2,
     name: { en: 'Qiyam (Standing)', ar: 'القيام', ur: 'قیام' },
-    image: qiyamImg,
+    
     description: {
       en: 'While standing, recite Surah Al-Fatiha followed by any short Surah or verses from the Quran. This is done in every rakah of the prayer.',
       ar: 'أثناء الوقوف، اقرأ سورة الفاتحة ثم سورة قصيرة أو آيات من القرآن. يتم ذلك في كل ركعة.',
@@ -60,7 +53,7 @@ const prayerSteps: PrayerStep[] = [
   {
     id: 3,
     name: { en: 'Ruku (Bowing)', ar: 'الركوع', ur: 'رکوع' },
-    image: rukuImg,
+    
     description: {
       en: 'Say "Allahu Akbar" and bow down, placing hands on knees with fingers spread. Keep the back straight and head in line with the back. Say the Tasbeeh three times.',
       ar: 'قل "الله أكبر" واركع واضعًا يديك على ركبتيك مع فتح الأصابع. حافظ على استقامة الظهر والرأس. قل التسبيح ثلاث مرات.',
@@ -78,7 +71,7 @@ const prayerSteps: PrayerStep[] = [
   {
     id: 4,
     name: { en: 'Sujud (Prostration)', ar: 'السجود', ur: 'سجدہ' },
-    image: sujudImg,
+    
     description: {
       en: 'Say "Allahu Akbar" and go into prostration. Seven body parts touch the ground: forehead with nose, both palms, both knees, and toes of both feet. Say the Tasbeeh three times. Rise saying "Allahu Akbar", sit briefly, then do a second Sujud.',
       ar: 'قل "الله أكبر" واسجد. سبعة أعضاء تلامس الأرض: الجبهة مع الأنف، الكفين، الركبتين، وأطراف القدمين. قل التسبيح ثلاث مرات. ارفع قائلاً "الله أكبر"، اجلس قليلاً، ثم اسجد سجدة ثانية.',
@@ -96,7 +89,7 @@ const prayerSteps: PrayerStep[] = [
   {
     id: 5,
     name: { en: 'Tashahhud (Sitting)', ar: 'التشهد', ur: 'تشہد / قعدہ' },
-    image: tashahhudImg,
+    
     description: {
       en: 'After the 2nd and last rakah, sit and recite Tashahhud. Point the index finger of the right hand during the declaration of faith. In the final sitting, also recite Durood and a final dua before Salam.',
       ar: 'بعد الركعة الثانية والأخيرة، اجلس واقرأ التشهد. أشر بسبابة اليد اليمنى عند الشهادة. في الجلسة الأخيرة، اقرأ أيضًا الصلاة الإبراهيمية ودعاء قبل السلام.',
@@ -114,7 +107,7 @@ const prayerSteps: PrayerStep[] = [
   {
     id: 6,
     name: { en: 'Salam (Ending)', ar: 'السلام', ur: 'سلام' },
-    image: salamImg,
+    
     description: {
       en: 'Turn your head to the right and say "Assalamu Alaikum wa Rahmatullah", then turn to the left and repeat. This concludes the prayer.',
       ar: 'أدر رأسك إلى اليمين وقل "السلام عليكم ورحمة الله"، ثم أدر إلى اليسار وكرر. بهذا تنتهي الصلاة.',
@@ -293,17 +286,7 @@ const NamazPage = () => {
             >
               <Card className="overflow-hidden border-border/50 shadow-lg">
                 <CardContent className="p-0">
-                  <div className="grid md:grid-cols-2 gap-0">
-                    {/* Image */}
-                    <div className="flex items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10 p-8 sm:p-12">
-                      <img
-                        src={step.image}
-                        alt={getName(step.name)}
-                        className="h-48 sm:h-64 md:h-72 object-contain drop-shadow-lg"
-                      />
-                    </div>
-
-                    {/* Content */}
+                  <div>
                     <div className="p-5 sm:p-8 flex flex-col justify-center">
                       <div className="flex items-center gap-3 mb-4">
                         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-bold">
