@@ -1,14 +1,137 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { useI18n } from '@/lib/i18n';
+import { useCategories, useAllDuas } from '@/hooks/useDuas';
+import { DuaCard } from '@/components/DuaCard';
+import { Sunrise, Sunset, Shield, Plane, Heart, Moon as MoonIcon, Coins, Gem } from 'lucide-react';
+import { useMemo } from 'react';
 
-const Index = () => {
+const categoryIcons: Record<string, React.ReactNode> = {
+  sunrise: <Sunrise className="h-6 w-6" />,
+  sunset: <Sunset className="h-6 w-6" />,
+  moon: <MoonIcon className="h-6 w-6" />,
+  shield: <Shield className="h-6 w-6" />,
+  plane: <Plane className="h-6 w-6" />,
+  kaaba: <Gem className="h-6 w-6" />,
+  heart: <Heart className="h-6 w-6" />,
+  coins: <Coins className="h-6 w-6" />,
+  rings: <Heart className="h-6 w-6" />,
+};
+
+const HomePage = () => {
+  const { t, lang } = useI18n();
+  const { data: categories } = useCategories();
+  const { data: allDuas } = useAllDuas();
+
+  const randomDua = useMemo(() => {
+    if (!allDuas?.length) return null;
+    const idx = Math.floor(new Date().getDate() % allDuas.length);
+    return allDuas[idx];
+  }, [allDuas]);
+
+  const popularDuas = useMemo(() => allDuas?.slice(0, 4) ?? [], [allDuas]);
+
+  const getCategoryName = (cat: { name: string; name_ar: string | null; name_ur: string | null }) => {
+    if (lang === 'ar' && cat.name_ar) return cat.name_ar;
+    if (lang === 'ur' && cat.name_ur) return cat.name_ur;
+    return cat.name;
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-primary py-20 text-primary-foreground islamic-pattern">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/90 to-primary" />
+        <div className="container relative z-10 text-center">
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+            <span className="mb-4 inline-block text-5xl">🕌</span>
+            <h1 className="font-display text-3xl font-bold leading-tight md:text-5xl">{t('heroTitle')}</h1>
+            <p className="mt-4 text-lg opacity-90 md:text-xl">{t('heroSubtitle')}</p>
+          </motion.div>
+
+          {/* Quick Access Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="mt-10 flex flex-wrap justify-center gap-3"
+          >
+            {categories?.slice(0, 5).map((cat) => (
+              <Link key={cat.id} to={`/categories/${cat.id}`}>
+                <Button variant="secondary" size="lg" className="gap-2 shadow-md">
+                  {categoryIcons[cat.icon || ''] || <Heart className="h-5 w-5" />}
+                  {getCategoryName(cat)}
+                </Button>
+              </Link>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Daily Dua */}
+      {randomDua && (
+        <section className="container py-12">
+          <h2 className="mb-6 font-display text-2xl font-bold text-foreground">{t('dailyDua')}</h2>
+          <DuaCard dua={randomDua} />
+        </section>
+      )}
+
+      {/* Categories Grid */}
+      <section className="bg-muted/30 py-12 islamic-pattern dark:islamic-pattern-dark">
+        <div className="container">
+          <h2 className="mb-8 font-display text-2xl font-bold text-foreground">{t('categories')}</h2>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {categories?.map((cat, i) => (
+              <motion.div
+                key={cat.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05 }}
+              >
+                <Link to={`/categories/${cat.id}`}>
+                  <Card className="cursor-pointer border-border/50 transition-all hover:border-primary/30 hover:shadow-lg">
+                    <CardContent className="flex items-center gap-4 p-5">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                        {categoryIcons[cat.icon || ''] || <Heart className="h-6 w-6" />}
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-foreground">{getCategoryName(cat)}</h3>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Popular Duas */}
+      {popularDuas.length > 0 && (
+        <section className="container py-12">
+          <h2 className="mb-6 font-display text-2xl font-bold text-foreground">{t('popularDuas')}</h2>
+          <div className="space-y-4">
+            {popularDuas.map((dua) => (
+              <DuaCard key={dua.id} dua={dua} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Tasbeeh Preview */}
+      <section className="bg-primary/5 py-12">
+        <div className="container text-center">
+          <h2 className="mb-4 font-display text-2xl font-bold text-foreground">{t('tasbeeh')}</h2>
+          <p className="mb-6 text-muted-foreground">Digital Tasbeeh Counter for daily dhikr</p>
+          <Link to="/tasbeeh">
+            <Button size="lg" className="gap-2">📿 {t('tasbeeh')} {t('counter')}</Button>
+          </Link>
+        </div>
+      </section>
     </div>
   );
 };
 
-export default Index;
+export default HomePage;
