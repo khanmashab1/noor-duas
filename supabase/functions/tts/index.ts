@@ -55,8 +55,14 @@ serve(async (req) => {
     if (!response.ok) {
       const errorText = await response.text();
       console.error("ElevenLabs error:", response.status, errorText);
-      return new Response(JSON.stringify({ error: "TTS generation failed" }), {
-        status: 500,
+      let detail = "TTS generation failed";
+      try {
+        const parsed = JSON.parse(errorText);
+        if (parsed?.detail?.message) detail = parsed.detail.message;
+        else if (parsed?.detail?.status) detail = parsed.detail.status;
+      } catch { /* use default */ }
+      return new Response(JSON.stringify({ error: detail }), {
+        status: response.status === 401 ? 401 : 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }

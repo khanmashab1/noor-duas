@@ -59,7 +59,15 @@ export const AudioPlayer = ({ url, arabicText }: AudioPlayerProps) => {
         }
       );
 
-      if (!response.ok) throw new Error('TTS failed');
+      if (!response.ok) {
+        let msg = 'Could not generate audio recitation.';
+        try {
+          const err = await response.json();
+          if (err?.error) msg = err.error;
+        } catch { /* use default */ }
+        toast({ title: 'Audio Error', description: msg, variant: 'destructive' });
+        return;
+      }
 
       const blob = await response.blob();
       const blobUrl = URL.createObjectURL(blob);
@@ -74,7 +82,7 @@ export const AudioPlayer = ({ url, arabicText }: AudioPlayerProps) => {
         }
       }, 100);
     } catch (e) {
-      toast({ title: 'Audio Error', description: 'Could not generate audio recitation.', variant: 'destructive' });
+      toast({ title: 'Audio Error', description: 'Network error generating audio.', variant: 'destructive' });
     } finally {
       setLoading(false);
     }
