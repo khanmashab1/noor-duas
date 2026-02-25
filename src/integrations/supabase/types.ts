@@ -129,6 +129,89 @@ export type Database = {
           },
         ]
       }
+      hadith_categories: {
+        Row: {
+          created_at: string
+          icon: string | null
+          id: string
+          name: string
+          name_ar: string | null
+          name_ur: string | null
+          sort_order: number | null
+        }
+        Insert: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name: string
+          name_ar?: string | null
+          name_ur?: string | null
+          sort_order?: number | null
+        }
+        Update: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name?: string
+          name_ar?: string | null
+          name_ur?: string | null
+          sort_order?: number | null
+        }
+        Relationships: []
+      }
+      hadiths: {
+        Row: {
+          arabic_text: string
+          category_id: string
+          created_at: string
+          english_translation: string | null
+          explanation: string | null
+          hadith_number: string | null
+          id: string
+          narrator: string | null
+          sort_order: number | null
+          source: string
+          updated_at: string
+          urdu_translation: string | null
+        }
+        Insert: {
+          arabic_text: string
+          category_id: string
+          created_at?: string
+          english_translation?: string | null
+          explanation?: string | null
+          hadith_number?: string | null
+          id?: string
+          narrator?: string | null
+          sort_order?: number | null
+          source: string
+          updated_at?: string
+          urdu_translation?: string | null
+        }
+        Update: {
+          arabic_text?: string
+          category_id?: string
+          created_at?: string
+          english_translation?: string | null
+          explanation?: string | null
+          hadith_number?: string | null
+          id?: string
+          narrator?: string | null
+          sort_order?: number | null
+          source?: string
+          updated_at?: string
+          urdu_translation?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hadiths_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "hadith_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
