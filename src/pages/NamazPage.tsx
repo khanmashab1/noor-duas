@@ -52,6 +52,23 @@ const prayerSteps: PrayerStep[] = [
   },
   {
     id: 3,
+    name: { en: 'Surah (After Fatiha)', ar: 'السورة', ur: 'سورت (فاتحہ کے بعد)' },
+    description: {
+      en: 'After Surah Al-Fatiha, recite any short Surah from the Quran. Here is Surah Al-Ikhlas (Chapter 112) as an example. This is recited in the first two rakaat of every prayer.',
+      ar: 'بعد سورة الفاتحة، اقرأ أي سورة قصيرة من القرآن. هنا سورة الإخلاص (الفصل ١١٢) كمثال. تُقرأ في أول ركعتين من كل صلاة.',
+      ur: 'سورۃ الفاتحہ کے بعد قرآن کی کوئی چھوٹی سورت پڑھیں۔ یہاں سورۃ الاخلاص (پارہ ٣٠) بطور مثال دی گئی ہے۔ یہ ہر نماز کی پہلی دو رکعتوں میں پڑھی جاتی ہے۔'
+    },
+    dua: {
+      arabic: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ۝ قُلْ هُوَ اللَّهُ أَحَدٌ ۝ اللَّهُ الصَّمَدُ ۝ لَمْ يَلِدْ وَلَمْ يُولَدْ ۝ وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ',
+      transliteration: 'Bismillahir Rahmanir Raheem. Qul huwal lahu ahad. Allahus samad. Lam yalid wa lam yulad. Wa lam yakul lahu kufuwan ahad.',
+      translation: {
+        en: 'In the name of Allah, the Most Gracious, the Most Merciful. Say: He is Allah, the One. Allah, the Eternal Refuge. He neither begets nor is born. Nor is there to Him any equivalent.',
+        ur: 'اللہ کے نام سے جو بڑا مہربان نہایت رحم والا ہے۔ کہو: وہ اللہ ایک ہے۔ اللہ بے نیاز ہے۔ نہ اس سے کوئی پیدا ہوا اور نہ وہ کسی سے پیدا ہوا۔ اور نہ کوئی اس کا ہمسر ہے۔'
+      }
+    }
+  },
+  {
+    id: 4,
     name: { en: 'Ruku (Bowing)', ar: 'الركوع', ur: 'رکوع' },
     
     description: {
@@ -69,7 +86,7 @@ const prayerSteps: PrayerStep[] = [
     }
   },
   {
-    id: 4,
+    id: 5,
     name: { en: 'Sujud (Prostration)', ar: 'السجود', ur: 'سجدہ' },
     
     description: {
@@ -87,7 +104,7 @@ const prayerSteps: PrayerStep[] = [
     }
   },
   {
-    id: 5,
+    id: 6,
     name: { en: 'Tashahhud (Sitting)', ar: 'التشهد', ur: 'تشہد / قعدہ' },
     description: {
       en: 'After the 2nd and last rakah, sit and recite Tashahhud (At-Tahiyyat). Point the index finger of the right hand during the declaration of faith.',
@@ -104,7 +121,7 @@ const prayerSteps: PrayerStep[] = [
     }
   },
   {
-    id: 6,
+    id: 7,
     name: { en: 'Durood Ibrahim', ar: 'الصلاة الإبراهيمية', ur: 'درود ابراہیمی' },
     description: {
       en: 'In the final sitting (Qa\'dah Akhirah), after reciting Tashahhud, recite Durood Ibrahim (Salawat upon the Prophet ﷺ). This is obligatory in the last rakah.',
@@ -121,7 +138,7 @@ const prayerSteps: PrayerStep[] = [
     }
   },
   {
-    id: 7,
+    id: 8,
     name: { en: 'Dua before Salam', ar: 'الدعاء قبل السلام', ur: 'سلام سے پہلے دعا' },
     description: {
       en: 'After Durood Ibrahim, recite this dua (Dua Masura) before ending the prayer with Salam. This is from Surah Al-Baqarah (2:201) and is authentically reported in Sahih Bukhari & Muslim.',
@@ -138,7 +155,7 @@ const prayerSteps: PrayerStep[] = [
     }
   },
   {
-    id: 8,
+    id: 9,
     name: { en: 'Salam (Ending)', ar: 'السلام', ur: 'سلام' },
     
     description: {
