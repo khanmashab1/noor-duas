@@ -53,6 +53,7 @@ const translations: Translations = {
   forgotPassword: { en: 'Forgot Password?', ar: 'نسيت كلمة المرور؟', ur: 'پاس ورڈ بھول گئے؟' },
   resetPassword: { en: 'Reset Password', ar: 'إعادة تعيين كلمة المرور', ur: 'پاس ورڈ ری سیٹ کریں' },
   wordByWord: { en: 'Word by Word', ar: 'كلمة بكلمة', ur: 'لفظ بہ لفظ' },
+  listen: { en: 'Listen', ar: 'استمع', ur: 'سنیں' },
 };
 
 interface I18nContextType {
