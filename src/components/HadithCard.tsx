@@ -1,9 +1,11 @@
-import { Copy, Share2 } from 'lucide-react';
+import { Copy, Share2, Image } from 'lucide-react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useI18n } from '@/lib/i18n';
 import { toast } from '@/hooks/use-toast';
+import { ShareImage } from '@/components/ShareImage';
 import type { Hadith } from '@/hooks/useHadiths';
 
 interface HadithCardProps {
@@ -12,6 +14,7 @@ interface HadithCardProps {
 
 export const HadithCard = ({ hadith }: HadithCardProps) => {
   const { t, lang } = useI18n();
+  const [showShareImage, setShowShareImage] = useState(false);
 
   const handleCopy = () => {
     const text = `${hadith.arabic_text}\n\n${hadith.english_translation || ''}\n\n— ${hadith.narrator || ''} | ${hadith.source} ${hadith.hadith_number || ''}`;
@@ -73,9 +76,20 @@ export const HadithCard = ({ hadith }: HadithCardProps) => {
             <Button variant="ghost" size="sm" onClick={handleShare} className="text-xs sm:text-sm px-2 sm:px-3">
               <Share2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> <span className="hidden xs:inline">{t('share')}</span>
             </Button>
+            <Button variant="ghost" size="sm" onClick={() => setShowShareImage(true)} className="text-xs sm:text-sm px-2 sm:px-3">
+              <Image className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> <span className="hidden xs:inline">Status</span>
+            </Button>
           </div>
         </CardContent>
       </Card>
+
+      {showShareImage && (
+        <ShareImage
+          content={{ ...hadith, reference: null, source: hadith.source }}
+          type="hadith"
+          onClose={() => setShowShareImage(false)}
+        />
+      )}
     </motion.div>
   );
 };
