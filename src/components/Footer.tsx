@@ -5,8 +5,8 @@ export const Footer = () => {
 
   return (
     <footer className="border-t border-border bg-muted/30 islamic-pattern dark:islamic-pattern-dark">
-      <div className="container py-12">
-        <div className="grid gap-8 md:grid-cols-3">
+      <div className="container px-4 sm:px-6 py-8 sm:py-12">
+        <div className="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
           <div>
             <div className="flex items-center gap-2 mb-3">
               <span className="text-2xl">🌙</span>
@@ -32,7 +32,7 @@ export const Footer = () => {
             </ul>
           </div>
         </div>
-        <div className="mt-8 border-t border-border pt-6 text-center text-xs text-muted-foreground">
+        <div className="mt-6 sm:mt-8 border-t border-border pt-4 sm:pt-6 text-center text-xs text-muted-foreground">
           © {new Date().getFullYear()} Noor Duas. All authentic duas sourced from Quran, Sahih Bukhari, Sahih Muslim & Hisnul Muslim.
         </div>
       </div>

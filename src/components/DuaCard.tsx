@@ -54,20 +54,20 @@ export const DuaCard = ({ dua, showExpand = true }: DuaCardProps) => {
       transition={{ duration: 0.3 }}
     >
       <Card className="overflow-hidden border-border/50 shadow-md hover:shadow-lg transition-shadow">
-        <CardContent className="p-6">
+        <CardContent className="p-4 sm:p-6">
           {/* Arabic Text */}
-          <div className="mb-4 rounded-lg bg-primary/5 p-5" dir="rtl">
-            <p className="font-arabic text-2xl leading-loose text-foreground">{dua.arabic_text}</p>
+          <div className="mb-4 rounded-lg bg-primary/5 p-3 sm:p-5" dir="rtl">
+            <p className="font-arabic text-xl sm:text-2xl leading-loose text-foreground">{dua.arabic_text}</p>
           </div>
 
           {/* Translations */}
           {(lang === 'ur' || lang === 'en') && dua.urdu_translation && (
             <div className="mb-3" dir="rtl">
-              <p className="font-urdu text-base leading-relaxed text-muted-foreground">{dua.urdu_translation}</p>
+              <p className="font-urdu text-sm sm:text-base leading-relaxed text-muted-foreground">{dua.urdu_translation}</p>
             </div>
           )}
           {(lang === 'en' || lang === 'ar') && dua.english_translation && (
-            <p className="mb-3 text-sm leading-relaxed text-muted-foreground">{dua.english_translation}</p>
+            <p className="mb-3 text-xs sm:text-sm leading-relaxed text-muted-foreground">{dua.english_translation}</p>
           )}
 
           {/* Reference */}
@@ -77,8 +77,8 @@ export const DuaCard = ({ dua, showExpand = true }: DuaCardProps) => {
             </div>
           )}
 
-          {/* Audio Player */}
-          {dua.audio_url && <AudioPlayer url={dua.audio_url} />}
+          {/* Audio Player - works with URL or on-demand TTS */}
+          <AudioPlayer url={dua.audio_url || undefined} arabicText={!dua.audio_url ? dua.arabic_text : undefined} />
 
           {/* Expanded Content */}
           <AnimatePresence>
@@ -90,15 +90,15 @@ export const DuaCard = ({ dua, showExpand = true }: DuaCardProps) => {
                 className="overflow-hidden"
               >
                 {dua.explanation && (
-                  <div className="mb-3 rounded-lg bg-muted p-4">
+                  <div className="mb-3 rounded-lg bg-muted p-3 sm:p-4">
                     <h4 className="mb-1 text-sm font-semibold">{t('explanation')}</h4>
-                    <p className="text-sm text-muted-foreground">{dua.explanation}</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground">{dua.explanation}</p>
                   </div>
                 )}
                 {dua.benefits && (
-                  <div className="mb-3 rounded-lg bg-muted p-4">
+                  <div className="mb-3 rounded-lg bg-muted p-3 sm:p-4">
                     <h4 className="mb-1 text-sm font-semibold">{t('benefits')}</h4>
-                    <p className="text-sm text-muted-foreground">{dua.benefits}</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground">{dua.benefits}</p>
                   </div>
                 )}
               </motion.div>
@@ -106,17 +106,17 @@ export const DuaCard = ({ dua, showExpand = true }: DuaCardProps) => {
           </AnimatePresence>
 
           {/* Actions */}
-          <div className="mt-4 flex flex-wrap items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={handleCopy}>
-              <Copy className="h-4 w-4" /> {t('copy')}
+          <div className="mt-4 flex flex-wrap items-center gap-1 sm:gap-2">
+            <Button variant="ghost" size="sm" onClick={handleCopy} className="text-xs sm:text-sm px-2 sm:px-3">
+              <Copy className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> <span className="hidden xs:inline">{t('copy')}</span>
             </Button>
-            <Button variant="ghost" size="sm" onClick={handleShare}>
-              <Share2 className="h-4 w-4" /> {t('share')}
+            <Button variant="ghost" size="sm" onClick={handleShare} className="text-xs sm:text-sm px-2 sm:px-3">
+              <Share2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> <span className="hidden xs:inline">{t('share')}</span>
             </Button>
             {user && (
-              <Button variant="ghost" size="sm" onClick={handleFavorite} className={fav ? 'text-destructive' : ''}>
-                <Heart className={`h-4 w-4 ${fav ? 'fill-current' : ''}`} />
-                {fav ? t('removeFavorite') : t('addFavorite')}
+              <Button variant="ghost" size="sm" onClick={handleFavorite} className={`text-xs sm:text-sm px-2 sm:px-3 ${fav ? 'text-destructive' : ''}`}>
+                <Heart className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${fav ? 'fill-current' : ''}`} />
+                <span className="hidden sm:inline">{fav ? t('removeFavorite') : t('addFavorite')}</span>
               </Button>
             )}
             {showExpand && (dua.explanation || dua.benefits) && (
@@ -125,7 +125,7 @@ export const DuaCard = ({ dua, showExpand = true }: DuaCardProps) => {
               </Button>
             )}
             <Link to={`/dua/${dua.id}`} className="ml-auto rtl:mr-auto rtl:ml-0">
-              <Button variant="outline" size="sm">{t('viewAll')}</Button>
+              <Button variant="outline" size="sm" className="text-xs sm:text-sm">{t('viewAll')}</Button>
             </Link>
           </div>
         </CardContent>
