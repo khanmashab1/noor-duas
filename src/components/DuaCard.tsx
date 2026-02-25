@@ -1,4 +1,4 @@
-import { Copy, Share2, Heart, ChevronDown, ChevronUp } from 'lucide-react';
+import { Copy, Share2, Heart, ChevronDown, ChevronUp, Image } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ import { toast } from '@/hooks/use-toast';
 import type { Dua } from '@/hooks/useDuas';
 import { Link } from 'react-router-dom';
 import { AudioPlayer } from '@/components/AudioPlayer';
+import { ShareDuaImage } from '@/components/ShareDuaImage';
 
 interface DuaCardProps {
   dua: Dua;
@@ -21,6 +22,7 @@ export const DuaCard = ({ dua, showExpand = true }: DuaCardProps) => {
   const { user } = useAuth();
   const { isFavorite, addFavorite, removeFavorite } = useFavorites();
   const [expanded, setExpanded] = useState(false);
+  const [showShareImage, setShowShareImage] = useState(false);
   const fav = user ? isFavorite(dua.id) : false;
 
   const handleCopy = () => {
@@ -113,6 +115,9 @@ export const DuaCard = ({ dua, showExpand = true }: DuaCardProps) => {
             <Button variant="ghost" size="sm" onClick={handleShare} className="text-xs sm:text-sm px-2 sm:px-3">
               <Share2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> <span className="hidden xs:inline">{t('share')}</span>
             </Button>
+            <Button variant="ghost" size="sm" onClick={() => setShowShareImage(true)} className="text-xs sm:text-sm px-2 sm:px-3">
+              <Image className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> <span className="hidden xs:inline">Status</span>
+            </Button>
             {user && (
               <Button variant="ghost" size="sm" onClick={handleFavorite} className={`text-xs sm:text-sm px-2 sm:px-3 ${fav ? 'text-destructive' : ''}`}>
                 <Heart className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${fav ? 'fill-current' : ''}`} />
@@ -130,6 +135,7 @@ export const DuaCard = ({ dua, showExpand = true }: DuaCardProps) => {
           </div>
         </CardContent>
       </Card>
+      {showShareImage && <ShareDuaImage dua={dua} onClose={() => setShowShareImage(false)} />}
     </motion.div>
   );
 };
