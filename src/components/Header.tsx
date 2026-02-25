@@ -1,10 +1,12 @@
-import { Link, useLocation } from 'react-router-dom';
-import { Sun, Moon, Menu, X, Heart, User, LogOut, Shield } from 'lucide-react';
-import { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Sun, Moon, Menu, X, Heart, User, LogOut, Shield, Search } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useI18n, Language } from '@/lib/i18n';
 import { useTheme } from '@/hooks/useTheme';
 import { useAuth } from '@/hooks/useAuth';
+import { useSearchDuas } from '@/hooks/useDuas';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,7 +21,12 @@ export const Header = () => {
   const { isDark, toggle } = useTheme();
   const { user, isAdmin, signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const location = useLocation();
+  const navigate = useNavigate();
+  const searchRef = useRef<HTMLDivElement>(null);
+  const { data: searchResults } = useSearchDuas(searchQuery);
 
   const navLinks = [
     { to: '/', label: t('home') },
@@ -29,16 +36,33 @@ export const Header = () => {
 
   const isActive = (path: string) => location.pathname === path;
 
+  // Close search dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setSearchOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  // Close search on route change
+  useEffect(() => {
+    setSearchOpen(false);
+    setSearchQuery('');
+  }, [location.pathname]);
+
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
+      <div className="container flex h-16 items-center justify-between gap-2">
+        <Link to="/" className="flex shrink-0 items-center gap-2">
           <span className="text-2xl">🌙</span>
-          <span className="font-display text-xl font-bold text-primary">{t('appName')}</span>
+          <span className="font-display text-xl font-bold text-primary hidden sm:inline">{t('appName')}</span>
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="hidden items-center gap-1 lg:flex">
           {navLinks.map((link) => (
             <Link
               key={link.to}
@@ -63,7 +87,44 @@ export const Header = () => {
           )}
         </nav>
 
-        <div className="flex items-center gap-2">
+        {/* Search Bar */}
+        <div ref={searchRef} className="relative flex-1 max-w-xs hidden md:block">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground rtl:left-auto rtl:right-3" />
+          <Input
+            placeholder={t('search')}
+            value={searchQuery}
+            onChange={(e) => { setSearchQuery(e.target.value); setSearchOpen(true); }}
+            onFocus={() => searchQuery.length > 2 && setSearchOpen(true)}
+            className="pl-9 rtl:pr-9 rtl:pl-3 h-9 text-sm"
+          />
+          {searchOpen && searchResults && searchResults.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-1 max-h-80 overflow-y-auto rounded-lg border border-border bg-popover shadow-lg z-50">
+              {searchResults.slice(0, 8).map((dua) => (
+                <button
+                  key={dua.id}
+                  onClick={() => { navigate(`/dua/${dua.id}`); setSearchOpen(false); setSearchQuery(''); }}
+                  className="w-full px-4 py-3 text-left hover:bg-muted transition-colors border-b border-border/50 last:border-0"
+                >
+                  <p className="font-arabic text-sm truncate" dir="rtl">{dua.arabic_text.slice(0, 80)}...</p>
+                  <p className="text-xs text-muted-foreground truncate mt-1">{dua.english_translation?.slice(0, 80)}</p>
+                  {dua.reference && <span className="text-xs text-accent-foreground">📖 {dua.reference}</span>}
+                </button>
+              ))}
+            </div>
+          )}
+          {searchOpen && searchQuery.length > 2 && searchResults?.length === 0 && (
+            <div className="absolute top-full left-0 right-0 mt-1 rounded-lg border border-border bg-popover p-4 shadow-lg text-center text-sm text-muted-foreground">
+              {t('noResults')}
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center gap-1">
+          {/* Mobile Search Toggle */}
+          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setSearchOpen(!searchOpen)}>
+            <Search className="h-4 w-4" />
+          </Button>
+
           {/* Language Switcher */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -114,15 +175,48 @@ export const Header = () => {
           )}
 
           {/* Mobile Menu Toggle */}
-          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileOpen(!mobileOpen)}>
+          <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
         </div>
       </div>
 
+      {/* Mobile Search Bar */}
+      {searchOpen && (
+        <div ref={searchRef} className="border-t border-border bg-background p-3 md:hidden relative">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground rtl:left-auto rtl:right-3" />
+            <Input
+              placeholder={t('search')}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 rtl:pr-9 rtl:pl-3"
+              autoFocus
+            />
+          </div>
+          {searchQuery.length > 2 && searchResults && searchResults.length > 0 && (
+            <div className="mt-2 max-h-60 overflow-y-auto rounded-lg border border-border bg-popover shadow-lg">
+              {searchResults.slice(0, 6).map((dua) => (
+                <button
+                  key={dua.id}
+                  onClick={() => { navigate(`/dua/${dua.id}`); setSearchOpen(false); setSearchQuery(''); }}
+                  className="w-full px-4 py-3 text-left hover:bg-muted transition-colors border-b border-border/50 last:border-0"
+                >
+                  <p className="font-arabic text-sm truncate" dir="rtl">{dua.arabic_text.slice(0, 60)}...</p>
+                  <p className="text-xs text-muted-foreground truncate mt-1">{dua.english_translation?.slice(0, 60)}</p>
+                </button>
+              ))}
+            </div>
+          )}
+          {searchQuery.length > 2 && searchResults?.length === 0 && (
+            <p className="mt-2 text-center text-sm text-muted-foreground">{t('noResults')}</p>
+          )}
+        </div>
+      )}
+
       {/* Mobile Nav */}
       {mobileOpen && (
-        <nav className="border-t border-border bg-background p-4 md:hidden">
+        <nav className="border-t border-border bg-background p-4 lg:hidden">
           <div className="flex flex-col gap-2">
             {navLinks.map((link) => (
               <Link
