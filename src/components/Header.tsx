@@ -31,6 +31,7 @@ export const Header = () => {
   const navLinks = [
     { to: '/', label: t('home') },
     { to: '/categories', label: t('categories') },
+    { to: '/hadith', label: t('hadith') },
     { to: '/tasbeeh', label: t('tasbeeh') },
   ];
 
