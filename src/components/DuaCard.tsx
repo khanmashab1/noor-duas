@@ -9,6 +9,7 @@ import { useFavorites } from '@/hooks/useFavorites';
 import { toast } from '@/hooks/use-toast';
 import type { Dua } from '@/hooks/useDuas';
 import { Link } from 'react-router-dom';
+import { AudioPlayer } from '@/components/AudioPlayer';
 
 interface DuaCardProps {
   dua: Dua;
@@ -75,6 +76,9 @@ export const DuaCard = ({ dua, showExpand = true }: DuaCardProps) => {
               <span className="text-xs font-medium text-accent-foreground">📖 {dua.reference}</span>
             </div>
           )}
+
+          {/* Audio Player */}
+          {dua.audio_url && <AudioPlayer url={dua.audio_url} />}
 
           {/* Expanded Content */}
           <AnimatePresence>

@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useDua, useDuasByCategory } from '@/hooks/useDuas';
 import { DuaCard } from '@/components/DuaCard';
+import { AudioPlayer } from '@/components/AudioPlayer';
 import { useI18n } from '@/lib/i18n';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -26,6 +27,15 @@ const DuaDetailPage = () => {
 
         <DuaCard dua={dua} showExpand={false} />
 
+        {/* Standalone Audio Player on detail page */}
+        {dua.audio_url && (
+          <Card className="mt-6">
+            <CardContent className="p-6">
+              <h3 className="mb-2 font-display text-lg font-semibold">🔊 {t('listen')}</h3>
+              <AudioPlayer url={dua.audio_url} />
+            </CardContent>
+          </Card>
+        )}
         {/* Word by Word */}
         {wordByWord && wordByWord.length > 0 && (
           <Card className="mt-6">
