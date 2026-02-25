@@ -4,7 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useI18n } from '@/lib/i18n';
 import { useCategories, useAllDuas } from '@/hooks/useDuas';
+import { useRandomHadith } from '@/hooks/useHadiths';
 import { DuaCard } from '@/components/DuaCard';
+import { HadithCard } from '@/components/HadithCard';
 import { Sunrise, Sunset, Shield, Plane, Heart, Moon as MoonIcon, Coins, Gem } from 'lucide-react';
 import { useMemo } from 'react';
 
@@ -24,6 +26,7 @@ const HomePage = () => {
   const { t, lang } = useI18n();
   const { data: categories } = useCategories();
   const { data: allDuas } = useAllDuas();
+  const { data: dailyHadith } = useRandomHadith();
 
   const randomDua = useMemo(() => {
     if (!allDuas?.length) return null;
@@ -75,6 +78,19 @@ const HomePage = () => {
         <section className="container px-4 sm:px-6 py-8 sm:py-12">
           <h2 className="mb-4 sm:mb-6 font-display text-xl sm:text-2xl font-bold text-foreground">{t('dailyDua')}</h2>
           <DuaCard dua={randomDua} />
+        </section>
+      )}
+
+      {/* Hadith of the Day */}
+      {dailyHadith && (
+        <section className="container px-4 sm:px-6 py-8 sm:py-12">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground">{t('hadithOfTheDay')}</h2>
+            <Link to="/hadith">
+              <Button variant="outline" size="sm">{t('viewAll')}</Button>
+            </Link>
+          </div>
+          <HadithCard hadith={dailyHadith} />
         </section>
       )}
 

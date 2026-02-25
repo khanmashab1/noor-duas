@@ -54,6 +54,11 @@ const translations: Translations = {
   resetPassword: { en: 'Reset Password', ar: 'إعادة تعيين كلمة المرور', ur: 'پاس ورڈ ری سیٹ کریں' },
   wordByWord: { en: 'Word by Word', ar: 'كلمة بكلمة', ur: 'لفظ بہ لفظ' },
   listen: { en: 'Listen', ar: 'استمع', ur: 'سنیں' },
+  hadith: { en: 'Hadith', ar: 'الحديث', ur: 'حدیث' },
+  hadithSubtitle: { en: 'Authentic Hadiths from Sahih Bukhari & Muslim', ar: 'أحاديث صحيحة من البخاري ومسلم', ur: 'صحیح بخاری اور مسلم سے مستند احادیث' },
+  hadithCategories: { en: 'Hadith Categories', ar: 'أقسام الأحاديث', ur: 'حدیث کے زمرے' },
+  hadithOfTheDay: { en: 'Hadith of the Day', ar: 'حديث اليوم', ur: 'آج کی حدیث' },
+  selectCategory: { en: 'Select a category to view hadiths', ar: 'اختر قسمًا لعرض الأحاديث', ur: 'احادیث دیکھنے کے لیے زمرہ منتخب کریں' },
 };
 
 interface I18nContextType {
