@@ -59,6 +59,7 @@ const translations: Translations = {
   hadithCategories: { en: 'Hadith Categories', ar: 'أقسام الأحاديث', ur: 'حدیث کے زمرے' },
   hadithOfTheDay: { en: 'Hadith of the Day', ar: 'حديث اليوم', ur: 'آج کی حدیث' },
   selectCategory: { en: 'Select a category to view hadiths', ar: 'اختر قسمًا لعرض الأحاديث', ur: 'احادیث دیکھنے کے لیے زمرہ منتخب کریں' },
+  searchHadith: { en: 'Search hadiths...', ar: 'ابحث عن حديث...', ur: 'حدیث تلاش کریں...' },
 };
 
 interface I18nContextType {

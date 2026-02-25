@@ -2,10 +2,20 @@ import { useRef, useState } from 'react';
 import { Download, Share2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
-import type { Dua } from '@/hooks/useDuas';
 
-interface ShareDuaImageProps {
-  dua: Dua;
+interface ShareableContent {
+  arabic_text: string;
+  english_translation?: string | null;
+  urdu_translation?: string | null;
+  reference?: string | null;
+  source?: string | null;
+  narrator?: string | null;
+  id: string;
+}
+
+interface ShareImageProps {
+  content: ShareableContent;
+  type?: 'dua' | 'hadith';
   onClose: () => void;
 }
 
@@ -16,12 +26,16 @@ const TEMPLATES = [
   { id: 'royal', bg: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%)', text: '#e0e7ff', accent: '#a78bfa' },
 ] as const;
 
-export const ShareDuaImage = ({ dua, onClose }: ShareDuaImageProps) => {
+export const ShareImage = ({ content, type = 'dua', onClose }: ShareImageProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [selectedTemplate, setSelectedTemplate] = useState(0);
   const [generating, setGenerating] = useState(false);
 
   const template = TEMPLATES[selectedTemplate];
+
+  const refText = type === 'hadith'
+    ? [content.narrator, content.source].filter(Boolean).join(' | ')
+    : content.reference || '';
 
   const drawImage = async (): Promise<Blob | null> => {
     const canvas = canvasRef.current;
@@ -33,7 +47,6 @@ export const ShareDuaImage = ({ dua, onClose }: ShareDuaImageProps) => {
     canvas.height = H;
     const ctx = canvas.getContext('2d')!;
 
-    // Background gradient
     const [, startColor, , endColor] = template.bg.match(/#[a-f0-9]{6}/gi) || [];
     const grad = ctx.createLinearGradient(0, 0, W, H);
     grad.addColorStop(0, startColor || '#1a5632');
@@ -42,14 +55,12 @@ export const ShareDuaImage = ({ dua, onClose }: ShareDuaImageProps) => {
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
 
-    // Decorative border
     ctx.strokeStyle = template.accent;
     ctx.lineWidth = 3;
     ctx.globalAlpha = 0.4;
     const m = 50;
     ctx.strokeRect(m, m, W - m * 2, H - m * 2);
 
-    // Corner ornaments
     const ornSize = 40;
     ctx.fillStyle = template.accent;
     [[m, m], [W - m, m], [m, H - m], [W - m, H - m]].forEach(([x, y]) => {
@@ -59,13 +70,11 @@ export const ShareDuaImage = ({ dua, onClose }: ShareDuaImageProps) => {
     });
     ctx.globalAlpha = 1;
 
-    // Top decoration – crescent
     ctx.font = '120px serif';
     ctx.textAlign = 'center';
     ctx.fillStyle = template.accent;
-    ctx.fillText('☪', W / 2, 220);
+    ctx.fillText(type === 'hadith' ? '📖' : '☪', W / 2, 220);
 
-    // Divider line
     ctx.strokeStyle = template.accent;
     ctx.lineWidth = 2;
     ctx.globalAlpha = 0.5;
@@ -75,20 +84,27 @@ export const ShareDuaImage = ({ dua, onClose }: ShareDuaImageProps) => {
     ctx.stroke();
     ctx.globalAlpha = 1;
 
+    // Type label
+    ctx.font = 'bold 28px Inter, sans-serif';
+    ctx.fillStyle = template.accent;
+    ctx.globalAlpha = 0.6;
+    ctx.direction = 'ltr';
+    ctx.fillText(type === 'hadith' ? 'HADITH' : 'DUA', W / 2, 330);
+    ctx.globalAlpha = 1;
+
     // Arabic text
     ctx.fillStyle = template.text;
     ctx.font = 'bold 52px Amiri, serif';
     ctx.textAlign = 'center';
     ctx.direction = 'rtl';
 
-    const arabicLines = wrapText(ctx, dua.arabic_text, W - 160, 52);
+    const arabicLines = wrapText(ctx, content.arabic_text, W - 160, 52);
     let y = 420;
     arabicLines.forEach((line) => {
       ctx.fillText(line, W / 2, y);
       y += 80;
     });
 
-    // Divider
     y += 30;
     ctx.strokeStyle = template.accent;
     ctx.lineWidth = 1.5;
@@ -100,13 +116,12 @@ export const ShareDuaImage = ({ dua, onClose }: ShareDuaImageProps) => {
     ctx.globalAlpha = 1;
     y += 50;
 
-    // English translation
-    if (dua.english_translation) {
+    if (content.english_translation) {
       ctx.font = 'italic 34px Inter, sans-serif';
       ctx.fillStyle = template.text;
       ctx.globalAlpha = 0.85;
       ctx.direction = 'ltr';
-      const engLines = wrapText(ctx, dua.english_translation, W - 180, 34);
+      const engLines = wrapText(ctx, content.english_translation, W - 180, 34);
       engLines.forEach((line) => {
         ctx.fillText(line, W / 2, y);
         y += 52;
@@ -114,14 +129,13 @@ export const ShareDuaImage = ({ dua, onClose }: ShareDuaImageProps) => {
       ctx.globalAlpha = 1;
     }
 
-    // Urdu translation
-    if (dua.urdu_translation) {
+    if (content.urdu_translation) {
       y += 30;
       ctx.font = '36px "Noto Nastaliq Urdu", serif';
       ctx.fillStyle = template.text;
       ctx.globalAlpha = 0.85;
       ctx.direction = 'rtl';
-      const urduLines = wrapText(ctx, dua.urdu_translation, W - 180, 36);
+      const urduLines = wrapText(ctx, content.urdu_translation, W - 180, 36);
       urduLines.forEach((line) => {
         ctx.fillText(line, W / 2, y);
         y += 60;
@@ -129,15 +143,13 @@ export const ShareDuaImage = ({ dua, onClose }: ShareDuaImageProps) => {
       ctx.globalAlpha = 1;
     }
 
-    // Reference
-    if (dua.reference) {
+    if (refText) {
       ctx.font = '28px Inter, sans-serif';
       ctx.fillStyle = template.accent;
       ctx.direction = 'ltr';
-      ctx.fillText(`📖 ${dua.reference}`, W / 2, Math.min(y + 60, H - 200));
+      ctx.fillText(`📖 ${refText}`, W / 2, Math.min(y + 60, H - 200));
     }
 
-    // Bottom branding
     ctx.font = 'bold 30px "Playfair Display", serif';
     ctx.fillStyle = template.accent;
     ctx.globalAlpha = 0.7;
@@ -145,7 +157,6 @@ export const ShareDuaImage = ({ dua, onClose }: ShareDuaImageProps) => {
     ctx.fillText('🌙 Noor Duas', W / 2, H - 100);
     ctx.globalAlpha = 1;
 
-    // Bottom divider
     ctx.strokeStyle = template.accent;
     ctx.lineWidth = 2;
     ctx.globalAlpha = 0.5;
@@ -190,7 +201,7 @@ export const ShareDuaImage = ({ dua, onClose }: ShareDuaImageProps) => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `noor-duas-${dua.id.slice(0, 8)}.png`;
+      a.download = `noor-duas-${content.id.slice(0, 8)}.png`;
       a.click();
       URL.revokeObjectURL(url);
       toast({ title: 'Downloaded!', description: 'Image saved. Share it on your status!' });
@@ -209,11 +220,10 @@ export const ShareDuaImage = ({ dua, onClose }: ShareDuaImageProps) => {
       if (navigator.canShare?.({ files: [file] })) {
         await navigator.share({
           title: 'Noor Duas',
-          text: dua.reference || 'Beautiful Dua from Noor Duas',
+          text: refText || 'From Noor Duas',
           files: [file],
         });
       } else {
-        // Fallback: download
         handleDownload();
       }
     } catch (e: any) {
@@ -227,10 +237,7 @@ export const ShareDuaImage = ({ dua, onClose }: ShareDuaImageProps) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={onClose}>
-      <div
-        className="relative w-full max-w-sm rounded-xl bg-card p-4 shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="relative w-full max-w-sm rounded-xl bg-card p-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
         <Button variant="ghost" size="icon" className="absolute right-2 top-2" onClick={onClose}>
           <X className="h-4 w-4" />
         </Button>
@@ -239,7 +246,6 @@ export const ShareDuaImage = ({ dua, onClose }: ShareDuaImageProps) => {
           Share as Image
         </h3>
 
-        {/* Template Previews */}
         <div className="mb-4 flex justify-center gap-2">
           {TEMPLATES.map((tmpl, i) => (
             <button
@@ -254,48 +260,38 @@ export const ShareDuaImage = ({ dua, onClose }: ShareDuaImageProps) => {
           ))}
         </div>
 
-        {/* Preview Card */}
         <div
           className="mx-auto mb-4 aspect-[9/16] w-full max-w-[240px] rounded-lg overflow-hidden shadow-lg"
           style={{ background: template.bg }}
         >
           <div className="flex h-full flex-col items-center justify-center p-4 text-center">
-            <span className="text-3xl mb-2" style={{ color: template.accent }}>☪</span>
-            <p
-              className="font-arabic text-sm leading-relaxed mb-2 line-clamp-4"
-              style={{ color: template.text }}
-              dir="rtl"
-            >
-              {dua.arabic_text}
+            <span className="text-3xl mb-1" style={{ color: template.accent }}>
+              {type === 'hadith' ? '📖' : '☪'}
+            </span>
+            <span className="text-[8px] font-bold tracking-widest mb-2" style={{ color: template.accent, opacity: 0.6 }}>
+              {type === 'hadith' ? 'HADITH' : 'DUA'}
+            </span>
+            <p className="font-arabic text-sm leading-relaxed mb-2 line-clamp-4" style={{ color: template.text }} dir="rtl">
+              {content.arabic_text}
             </p>
-            {dua.english_translation && (
-              <p
-                className="text-[10px] italic leading-snug mb-1 line-clamp-3"
-                style={{ color: template.text, opacity: 0.85 }}
-              >
-                {dua.english_translation}
+            {content.english_translation && (
+              <p className="text-[10px] italic leading-snug mb-1 line-clamp-3" style={{ color: template.text, opacity: 0.85 }}>
+                {content.english_translation}
               </p>
             )}
-            {dua.reference && (
-              <span className="text-[9px] mt-1" style={{ color: template.accent }}>
-                📖 {dua.reference}
-              </span>
+            {refText && (
+              <span className="text-[9px] mt-1" style={{ color: template.accent }}>📖 {refText}</span>
             )}
-            <span className="text-[9px] mt-auto" style={{ color: template.accent, opacity: 0.7 }}>
-              🌙 Noor Duas
-            </span>
+            <span className="text-[9px] mt-auto" style={{ color: template.accent, opacity: 0.7 }}>🌙 Noor Duas</span>
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex gap-2">
           <Button onClick={handleDownload} className="flex-1" variant="outline" disabled={generating}>
-            <Download className="h-4 w-4 mr-1" />
-            Download
+            <Download className="h-4 w-4 mr-1" /> Download
           </Button>
           <Button onClick={handleShare} className="flex-1" disabled={generating}>
-            <Share2 className="h-4 w-4 mr-1" />
-            Share
+            <Share2 className="h-4 w-4 mr-1" /> Share
           </Button>
         </div>
 

@@ -10,7 +10,7 @@ import { toast } from '@/hooks/use-toast';
 import type { Dua } from '@/hooks/useDuas';
 import { Link } from 'react-router-dom';
 import { AudioPlayer } from '@/components/AudioPlayer';
-import { ShareDuaImage } from '@/components/ShareDuaImage';
+import { ShareImage } from '@/components/ShareImage';
 
 interface DuaCardProps {
   dua: Dua;
@@ -135,7 +135,7 @@ export const DuaCard = ({ dua, showExpand = true }: DuaCardProps) => {
           </div>
         </CardContent>
       </Card>
-      {showShareImage && <ShareDuaImage dua={dua} onClose={() => setShowShareImage(false)} />}
+      {showShareImage && <ShareImage content={{ ...dua, source: null, narrator: null }} type="dua" onClose={() => setShowShareImage(false)} />}
     </motion.div>
   );
 };
