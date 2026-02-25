@@ -1,0 +1,372 @@
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useI18n } from '@/lib/i18n';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { ChevronLeft, ChevronRight, Clock, BookOpen } from 'lucide-react';
+
+import takbeerImg from '@/assets/namaz/takbeer.png';
+import qiyamImg from '@/assets/namaz/qiyam.png';
+import rukuImg from '@/assets/namaz/ruku.png';
+import sujudImg from '@/assets/namaz/sujud.png';
+import tashahhudImg from '@/assets/namaz/tashahhud.png';
+import salamImg from '@/assets/namaz/salam.png';
+
+interface PrayerStep {
+  id: number;
+  name: { en: string; ar: string; ur: string };
+  image: string;
+  description: { en: string; ar: string; ur: string };
+  dua: { arabic: string; transliteration: string; translation: { en: string; ur: string } };
+}
+
+const prayerSteps: PrayerStep[] = [
+  {
+    id: 1,
+    name: { en: 'Takbeer (Opening)', ar: 'تكبيرة الإحرام', ur: 'تکبیرِ تحریمہ' },
+    image: takbeerImg,
+    description: {
+      en: 'Stand facing the Qibla. Raise both hands up to the ears (men) or shoulders (women) and say "Allahu Akbar". Then fold hands — right hand over left wrist — below the navel (men) or on the chest (women).',
+      ar: 'قف مواجهًا القبلة. ارفع يديك حذو أذنيك (للرجل) أو الكتفين (للمرأة) وقل "الله أكبر". ثم ضع اليد اليمنى على اليسرى تحت السرة (للرجل) أو على الصدر (للمرأة).',
+      ur: 'قبلہ رخ کھڑے ہوں۔ دونوں ہاتھ کانوں تک اٹھائیں (مرد) یا کندھوں تک (خواتین) اور "اللہ اکبر" کہیں۔ پھر دایاں ہاتھ بائیں کلائی پر رکھیں — ناف کے نیچے (مرد) یا سینے پر (خواتین)۔'
+    },
+    dua: {
+      arabic: 'سُبْحَانَكَ اللَّهُمَّ وَبِحَمْدِكَ وَتَبَارَكَ اسْمُكَ وَتَعَالَى جَدُّكَ وَلَا إِلٰهَ غَيْرُكَ',
+      transliteration: 'Subhanaka Allahumma wa bihamdika wa tabarakasmuka wa ta\'ala jadduka wa la ilaha ghairuk',
+      translation: {
+        en: 'Glory be to You, O Allah, and praise be to You. Blessed is Your name and exalted is Your majesty. There is no god but You.',
+        ur: 'اے اللہ! تو پاک ہے اور تیری حمد کے ساتھ، تیرا نام بابرکت ہے اور تیری شان بلند ہے اور تیرے سوا کوئی معبود نہیں۔'
+      }
+    }
+  },
+  {
+    id: 2,
+    name: { en: 'Qiyam (Standing)', ar: 'القيام', ur: 'قیام' },
+    image: qiyamImg,
+    description: {
+      en: 'While standing, recite Surah Al-Fatiha followed by any short Surah or verses from the Quran. This is done in every rakah of the prayer.',
+      ar: 'أثناء الوقوف، اقرأ سورة الفاتحة ثم سورة قصيرة أو آيات من القرآن. يتم ذلك في كل ركعة.',
+      ur: 'کھڑے ہو کر سورۃ الفاتحہ پڑھیں اور پھر قرآن کی کوئی چھوٹی سورت یا آیات پڑھیں۔ یہ ہر رکعت میں کیا جاتا ہے۔'
+    },
+    dua: {
+      arabic: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ۝ الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ ۝ الرَّحْمَٰنِ الرَّحِيمِ ۝ مَالِكِ يَوْمِ الدِّينِ ۝ إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ ۝ اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ ۝ صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ',
+      transliteration: 'Bismillahir Rahmanir Raheem. Alhamdu lillahi Rabbil \'aalameen. Ar-Rahmanir Raheem. Maliki yawmid-deen. Iyyaka na\'budu wa iyyaka nasta\'een. Ihdinas-siratal mustaqeem. Siratal lazeena an\'amta \'alaihim, ghairil maghdoobi \'alaihim walad-daalleen.',
+      translation: {
+        en: 'In the name of Allah, the Most Gracious, the Most Merciful. All praise is due to Allah, Lord of the worlds. The Most Gracious, the Most Merciful. Master of the Day of Judgment. You alone we worship, and You alone we ask for help. Guide us on the Straight Path. The path of those You have blessed, not of those who earn Your anger, nor of those who go astray.',
+        ur: 'اللہ کے نام سے جو بڑا مہربان نہایت رحم والا ہے۔ سب تعریفیں اللہ کے لیے ہیں جو تمام جہانوں کا پالنے والا ہے۔ بڑا مہربان نہایت رحم والا۔ روزِ جزا کا مالک۔ ہم تیری ہی عبادت کرتے ہیں اور تجھ ہی سے مدد چاہتے ہیں۔ ہمیں سیدھا راستہ دکھا۔ ان لوگوں کا راستہ جن پر تو نے انعام کیا، نہ ان کا جن پر غضب ہوا اور نہ گمراہوں کا۔'
+      }
+    }
+  },
+  {
+    id: 3,
+    name: { en: 'Ruku (Bowing)', ar: 'الركوع', ur: 'رکوع' },
+    image: rukuImg,
+    description: {
+      en: 'Say "Allahu Akbar" and bow down, placing hands on knees with fingers spread. Keep the back straight and head in line with the back. Say the Tasbeeh three times.',
+      ar: 'قل "الله أكبر" واركع واضعًا يديك على ركبتيك مع فتح الأصابع. حافظ على استقامة الظهر والرأس. قل التسبيح ثلاث مرات.',
+      ur: '"اللہ اکبر" کہیں اور جھکیں، ہاتھ گھٹنوں پر رکھیں انگلیاں کھلی ہوں۔ کمر سیدھی رکھیں اور سر کمر کے برابر۔ تسبیح تین بار پڑھیں۔'
+    },
+    dua: {
+      arabic: 'سُبْحَانَ رَبِّيَ الْعَظِيمِ',
+      transliteration: 'Subhana Rabbiyal Azeem',
+      translation: {
+        en: 'Glory be to my Lord, the Most Great.',
+        ur: 'پاک ہے میرا رب جو بڑی عظمت والا ہے۔'
+      }
+    }
+  },
+  {
+    id: 4,
+    name: { en: 'Sujud (Prostration)', ar: 'السجود', ur: 'سجدہ' },
+    image: sujudImg,
+    description: {
+      en: 'Say "Allahu Akbar" and go into prostration. Seven body parts touch the ground: forehead with nose, both palms, both knees, and toes of both feet. Say the Tasbeeh three times. Rise saying "Allahu Akbar", sit briefly, then do a second Sujud.',
+      ar: 'قل "الله أكبر" واسجد. سبعة أعضاء تلامس الأرض: الجبهة مع الأنف، الكفين، الركبتين، وأطراف القدمين. قل التسبيح ثلاث مرات. ارفع قائلاً "الله أكبر"، اجلس قليلاً، ثم اسجد سجدة ثانية.',
+      ur: '"اللہ اکبر" کہیں اور سجدے میں جائیں۔ سات اعضاء زمین پر لگیں: پیشانی ناک کے ساتھ، دونوں ہتھیلیاں، دونوں گھٹنے، اور دونوں پاؤں کی انگلیاں۔ تسبیح تین بار پڑھیں۔ "اللہ اکبر" کہتے ہوئے اٹھیں، تھوڑا بیٹھیں، پھر دوسرا سجدہ کریں۔'
+    },
+    dua: {
+      arabic: 'سُبْحَانَ رَبِّيَ الْأَعْلَى',
+      transliteration: 'Subhana Rabbiyal A\'la',
+      translation: {
+        en: 'Glory be to my Lord, the Most High.',
+        ur: 'پاک ہے میرا رب جو سب سے بلند ہے۔'
+      }
+    }
+  },
+  {
+    id: 5,
+    name: { en: 'Tashahhud (Sitting)', ar: 'التشهد', ur: 'تشہد / قعدہ' },
+    image: tashahhudImg,
+    description: {
+      en: 'After the 2nd and last rakah, sit and recite Tashahhud. Point the index finger of the right hand during the declaration of faith. In the final sitting, also recite Durood and a final dua before Salam.',
+      ar: 'بعد الركعة الثانية والأخيرة، اجلس واقرأ التشهد. أشر بسبابة اليد اليمنى عند الشهادة. في الجلسة الأخيرة، اقرأ أيضًا الصلاة الإبراهيمية ودعاء قبل السلام.',
+      ur: 'دوسری اور آخری رکعت کے بعد بیٹھ کر تشہد پڑھیں۔ شہادت کی انگلی سے اشارہ کریں۔ آخری قعدے میں درود شریف اور سلام سے پہلے دعا بھی پڑھیں۔'
+    },
+    dua: {
+      arabic: 'التَّحِيَّاتُ لِلَّهِ وَالصَّلَوَاتُ وَالطَّيِّبَاتُ، السَّلَامُ عَلَيْكَ أَيُّهَا النَّبِيُّ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ، السَّلَامُ عَلَيْنَا وَعَلَى عِبَادِ اللَّهِ الصَّالِحِينَ، أَشْهَدُ أَنْ لَا إِلٰهَ إِلَّا اللَّهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ',
+      transliteration: 'At-tahiyyatu lillahi was-salawatu wat-tayyibatu. As-salamu \'alaika ayyuhan-nabiyyu wa rahmatullahi wa barakatuh. As-salamu \'alaina wa \'ala \'ibadillahis-saliheen. Ash-hadu an la ilaha illallahu wa ash-hadu anna Muhammadan \'abduhu wa rasuluh.',
+      translation: {
+        en: 'All greetings, prayers, and good deeds are for Allah. Peace be upon you, O Prophet, and the mercy of Allah and His blessings. Peace be upon us and upon the righteous servants of Allah. I bear witness that there is no god but Allah, and I bear witness that Muhammad is His servant and messenger.',
+        ur: 'تمام تعظیمیں، نمازیں اور پاکیزہ باتیں اللہ کے لیے ہیں۔ اے نبی! آپ پر سلام ہو اور اللہ کی رحمت اور برکات۔ ہم پر اور اللہ کے نیک بندوں پر سلام ہو۔ میں گواہی دیتا ہوں کہ اللہ کے سوا کوئی معبود نہیں اور محمد ﷺ اس کے بندے اور رسول ہیں۔'
+      }
+    }
+  },
+  {
+    id: 6,
+    name: { en: 'Salam (Ending)', ar: 'السلام', ur: 'سلام' },
+    image: salamImg,
+    description: {
+      en: 'Turn your head to the right and say "Assalamu Alaikum wa Rahmatullah", then turn to the left and repeat. This concludes the prayer.',
+      ar: 'أدر رأسك إلى اليمين وقل "السلام عليكم ورحمة الله"، ثم أدر إلى اليسار وكرر. بهذا تنتهي الصلاة.',
+      ur: 'سر دائیں طرف پھیریں اور کہیں "السلام علیکم ورحمۃ اللہ"، پھر بائیں طرف پھیریں اور دہرائیں۔ اس سے نماز مکمل ہوتی ہے۔'
+    },
+    dua: {
+      arabic: 'السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ',
+      transliteration: 'Assalamu Alaikum wa Rahmatullah',
+      translation: {
+        en: 'Peace be upon you and the mercy of Allah.',
+        ur: 'تم پر سلامتی ہو اور اللہ کی رحمت۔'
+      }
+    }
+  }
+];
+
+interface PrayerInfo {
+  name: { en: string; ar: string; ur: string };
+  time: { en: string; ar: string; ur: string };
+  rakaat: string;
+  sunnah: string;
+}
+
+const prayers: PrayerInfo[] = [
+  {
+    name: { en: 'Fajr', ar: 'الفجر', ur: 'فجر' },
+    time: { en: 'Before Sunrise', ar: 'قبل الشروق', ur: 'طلوعِ آفتاب سے پہلے' },
+    rakaat: '2',
+    sunnah: '2 before'
+  },
+  {
+    name: { en: 'Dhuhr', ar: 'الظهر', ur: 'ظہر' },
+    time: { en: 'After Midday', ar: 'بعد الزوال', ur: 'دوپہر کے بعد' },
+    rakaat: '4',
+    sunnah: '4 before, 2 after'
+  },
+  {
+    name: { en: 'Asr', ar: 'العصر', ur: 'عصر' },
+    time: { en: 'Afternoon', ar: 'العصر', ur: 'دوپہر بعد' },
+    rakaat: '4',
+    sunnah: '4 before (optional)'
+  },
+  {
+    name: { en: 'Maghrib', ar: 'المغرب', ur: 'مغرب' },
+    time: { en: 'After Sunset', ar: 'بعد الغروب', ur: 'غروبِ آفتاب کے بعد' },
+    rakaat: '3',
+    sunnah: '2 after'
+  },
+  {
+    name: { en: 'Isha', ar: 'العشاء', ur: 'عشاء' },
+    time: { en: 'Night', ar: 'الليل', ur: 'رات' },
+    rakaat: '4',
+    sunnah: '2 after + 3 Witr'
+  }
+];
+
+const NamazPage = () => {
+  const { t, lang } = useI18n();
+  const [activeStep, setActiveStep] = useState(0);
+  const [selectedPrayer, setSelectedPrayer] = useState<number | null>(null);
+
+  const step = prayerSteps[activeStep];
+
+  const getName = (obj: { en: string; ar: string; ur: string }) => obj[lang] || obj.en;
+
+  const goNext = () => setActiveStep((s) => Math.min(s + 1, prayerSteps.length - 1));
+  const goPrev = () => setActiveStep((s) => Math.max(s - 1, 0));
+
+  return (
+    <div className="min-h-screen">
+      {/* Hero */}
+      <section className="relative overflow-hidden bg-primary py-10 sm:py-16 text-primary-foreground islamic-pattern">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/90 to-primary" />
+        <div className="container relative z-10 px-4 sm:px-6 text-center">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+            <span className="mb-3 inline-block text-4xl">🕌</span>
+            <h1 className="font-display text-2xl sm:text-4xl font-bold">{t('namazGuide')}</h1>
+            <p className="mt-2 text-sm sm:text-lg opacity-90">{t('namazSubtitle')}</p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Prayer Times Overview */}
+      <section className="container px-4 sm:px-6 py-8 sm:py-12">
+        <h2 className="mb-6 font-display text-xl sm:text-2xl font-bold text-foreground flex items-center gap-2">
+          <Clock className="h-5 w-5 text-primary" />
+          {t('fivePrayers')}
+        </h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          {prayers.map((prayer, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.08 }}
+            >
+              <Card
+                className={`cursor-pointer transition-all hover:shadow-lg border-border/50 ${selectedPrayer === i ? 'ring-2 ring-primary border-primary' : 'hover:border-primary/30'}`}
+                onClick={() => setSelectedPrayer(selectedPrayer === i ? null : i)}
+              >
+                <CardContent className="p-4 text-center">
+                  <h3 className="font-display text-lg font-bold text-foreground">{getName(prayer.name)}</h3>
+                  <p className="text-xs text-muted-foreground mt-1">{getName(prayer.time)}</p>
+                  <div className="mt-3 text-2xl font-bold text-primary">{prayer.rakaat}</div>
+                  <p className="text-xs text-muted-foreground">{lang === 'en' ? 'Fard Rakaat' : lang === 'ar' ? 'ركعات فرض' : 'فرض رکعات'}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Expanded prayer detail */}
+        <AnimatePresence>
+          {selectedPrayer !== null && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="overflow-hidden"
+            >
+              <Card className="mt-4 border-primary/20 bg-primary/5">
+                <CardContent className="p-5">
+                  <h3 className="font-display text-lg font-bold text-foreground mb-2">
+                    {getName(prayers[selectedPrayer].name)} — {lang === 'en' ? 'Details' : lang === 'ar' ? 'التفاصيل' : 'تفصیلات'}
+                  </h3>
+                  <div className="grid sm:grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="font-semibold text-foreground">{lang === 'en' ? 'Fard (Obligatory)' : lang === 'ar' ? 'فرض' : 'فرض'}:</span>
+                      <span className="text-muted-foreground ml-2">{prayers[selectedPrayer].rakaat} {lang === 'en' ? 'Rakaat' : 'رکعات'}</span>
+                    </div>
+                    <div>
+                      <span className="font-semibold text-foreground">{lang === 'en' ? 'Sunnah' : 'سنت'}:</span>
+                      <span className="text-muted-foreground ml-2">{prayers[selectedPrayer].sunnah}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </section>
+
+      {/* Step-by-step guide */}
+      <section className="bg-muted/30 py-8 sm:py-12 islamic-pattern dark:islamic-pattern-dark">
+        <div className="container px-4 sm:px-6">
+          <h2 className="mb-6 font-display text-xl sm:text-2xl font-bold text-foreground flex items-center gap-2">
+            <BookOpen className="h-5 w-5 text-primary" />
+            {t('stepByStep')}
+          </h2>
+
+          {/* Step indicators */}
+          <div className="flex items-center justify-center gap-1 sm:gap-2 mb-8 flex-wrap">
+            {prayerSteps.map((s, i) => (
+              <button
+                key={s.id}
+                onClick={() => setActiveStep(i)}
+                className={`px-2 sm:px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all ${
+                  i === activeStep
+                    ? 'bg-primary text-primary-foreground shadow-md'
+                    : 'bg-background text-muted-foreground hover:bg-muted border border-border'
+                }`}
+              >
+                {i + 1}. {getName(s.name)}
+              </button>
+            ))}
+          </div>
+
+          {/* Active step card */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeStep}
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -40 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Card className="overflow-hidden border-border/50 shadow-lg">
+                <CardContent className="p-0">
+                  <div className="grid md:grid-cols-2 gap-0">
+                    {/* Image */}
+                    <div className="flex items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10 p-8 sm:p-12">
+                      <img
+                        src={step.image}
+                        alt={getName(step.name)}
+                        className="h-48 sm:h-64 md:h-72 object-contain drop-shadow-lg"
+                      />
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-5 sm:p-8 flex flex-col justify-center">
+                      <div className="flex items-center gap-3 mb-4">
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-bold">
+                          {step.id}
+                        </span>
+                        <h3 className="font-display text-xl sm:text-2xl font-bold text-foreground">
+                          {getName(step.name)}
+                        </h3>
+                      </div>
+
+                      <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mb-6">
+                        {step.description[lang] || step.description.en}
+                      </p>
+
+                      {/* Dua section */}
+                      <div className="rounded-xl bg-primary/5 border border-primary/10 p-4">
+                        <p className="text-xs font-semibold text-primary uppercase tracking-wider mb-2">
+                          {lang === 'en' ? 'Recitation' : lang === 'ar' ? 'الذكر' : 'تلاوت'}
+                        </p>
+                        <p className="font-arabic text-lg sm:text-xl text-foreground leading-loose mb-2" dir="rtl">
+                          {step.dua.arabic}
+                        </p>
+                        <p className="text-xs text-muted-foreground italic mb-2">
+                          {step.dua.transliteration}
+                        </p>
+                        <p className="text-sm text-foreground/80">
+                          {lang === 'ur' ? step.dua.translation.ur : step.dua.translation.en}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Navigation */}
+          <div className="flex items-center justify-between mt-6">
+            <Button
+              variant="outline"
+              onClick={goPrev}
+              disabled={activeStep === 0}
+              className="gap-2"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              {lang === 'en' ? 'Previous' : lang === 'ar' ? 'السابق' : 'پچھلا'}
+            </Button>
+            <span className="text-sm text-muted-foreground">
+              {activeStep + 1} / {prayerSteps.length}
+            </span>
+            <Button
+              onClick={goNext}
+              disabled={activeStep === prayerSteps.length - 1}
+              className="gap-2"
+            >
+              {lang === 'en' ? 'Next' : lang === 'ar' ? 'التالي' : 'اگلا'}
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default NamazPage;

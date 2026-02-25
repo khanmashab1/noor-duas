@@ -60,6 +60,11 @@ const translations: Translations = {
   hadithOfTheDay: { en: 'Hadith of the Day', ar: 'حديث اليوم', ur: 'آج کی حدیث' },
   selectCategory: { en: 'Select a category to view hadiths', ar: 'اختر قسمًا لعرض الأحاديث', ur: 'احادیث دیکھنے کے لیے زمرہ منتخب کریں' },
   searchHadith: { en: 'Search hadiths...', ar: 'ابحث عن حديث...', ur: 'حدیث تلاش کریں...' },
+  namaz: { en: 'Namaz', ar: 'الصلاة', ur: 'نماز' },
+  namazGuide: { en: 'How to Pray Namaz', ar: 'كيفية أداء الصلاة', ur: 'نماز کا طریقہ' },
+  namazSubtitle: { en: 'Complete step-by-step guide with illustrated postures & duas', ar: 'دليل خطوة بخطوة مع الأوضاع والأدعية المصورة', ur: 'مکمل مرحلہ وار رہنمائی تصاویر اور دعاؤں کے ساتھ' },
+  fivePrayers: { en: 'The Five Daily Prayers', ar: 'الصلوات الخمس', ur: 'پانچ وقت کی نمازیں' },
+  stepByStep: { en: 'Step-by-Step Prayer Guide', ar: 'دليل الصلاة خطوة بخطوة', ur: 'نماز کا مرحلہ وار طریقہ' },
 };
 
 interface I18nContextType {

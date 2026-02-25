@@ -16,6 +16,7 @@ import ProfilePage from "./pages/ProfilePage";
 import AdminPage from "./pages/AdminPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import HadithPage from "./pages/HadithPage";
+import NamazPage from "./pages/NamazPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +43,7 @@ const App = () => (
                 <Route path="/admin" element={<AdminPage />} />
                 <Route path="/reset-password" element={<ResetPasswordPage />} />
                 <Route path="/hadith" element={<HadithPage />} />
+                <Route path="/namaz" element={<NamazPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>

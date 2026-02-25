@@ -32,6 +32,7 @@ export const Header = () => {
     { to: '/', label: t('home') },
     { to: '/categories', label: t('categories') },
     { to: '/hadith', label: t('hadith') },
+    { to: '/namaz', label: t('namaz') },
     { to: '/tasbeeh', label: t('tasbeeh') },
   ];
 
