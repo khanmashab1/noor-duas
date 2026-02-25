@@ -76,13 +76,13 @@ const AdminPage = () => {
   };
 
   return (
-    <div className="container py-8">
-      <h1 className="mb-8 font-display text-3xl font-bold text-foreground">{t('admin')}</h1>
+    <div className="container px-4 sm:px-6 py-6 sm:py-8">
+      <h1 className="mb-6 sm:mb-8 font-display text-2xl sm:text-3xl font-bold text-foreground">{t('admin')}</h1>
 
-      <div className="grid gap-8 lg:grid-cols-2">
+      <div className="grid gap-6 sm:gap-8 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
               <Plus className="h-5 w-5" />
               {editingDua ? 'Edit Dua' : 'Add New Dua'}
             </CardTitle>
@@ -134,15 +134,15 @@ const AdminPage = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Existing Duas ({allDuas?.length ?? 0})</CardTitle>
+            <CardTitle className="text-lg sm:text-xl">Existing Duas ({allDuas?.length ?? 0})</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="max-h-[600px] space-y-2 overflow-y-auto">
               {allDuas?.map((dua) => (
-                <div key={dua.id} className="flex items-start gap-2 rounded-lg border border-border p-3">
-                  <p className="flex-1 truncate font-arabic text-sm" dir="rtl">{dua.arabic_text}</p>
-                  <Button variant="ghost" size="icon" onClick={() => handleEdit(dua)}><Edit className="h-4 w-4" /></Button>
-                  <Button variant="ghost" size="icon" onClick={() => handleDelete(dua.id)} className="text-destructive"><Trash2 className="h-4 w-4" /></Button>
+                <div key={dua.id} className="flex items-start gap-2 rounded-lg border border-border p-2 sm:p-3">
+                  <p className="flex-1 truncate font-arabic text-xs sm:text-sm" dir="rtl">{dua.arabic_text}</p>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => handleEdit(dua)}><Edit className="h-3.5 w-3.5 sm:h-4 sm:w-4" /></Button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 text-destructive" onClick={() => handleDelete(dua.id)}><Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" /></Button>
                 </div>
               ))}
             </div>

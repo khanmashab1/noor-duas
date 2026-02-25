@@ -34,12 +34,12 @@ const CategoriesPage = () => {
 
   if (id && duas) {
     return (
-      <div className="container py-8">
+      <div className="container px-4 sm:px-6 py-6 sm:py-8">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <Link to="/categories" className="mb-4 inline-block text-sm text-primary hover:underline">
             ← {t('categories')}
           </Link>
-          <h1 className="mb-6 font-display text-3xl font-bold text-foreground">
+          <h1 className="mb-4 sm:mb-6 font-display text-2xl sm:text-3xl font-bold text-foreground">
             {currentCategory ? getCategoryName(currentCategory) : t('loading')}
           </h1>
           <div className="space-y-4">
@@ -54,19 +54,19 @@ const CategoriesPage = () => {
   }
 
   return (
-    <div className="container py-8">
-      <h1 className="mb-8 font-display text-3xl font-bold text-foreground">{t('categories')}</h1>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="container px-4 sm:px-6 py-6 sm:py-8">
+      <h1 className="mb-6 sm:mb-8 font-display text-2xl sm:text-3xl font-bold text-foreground">{t('categories')}</h1>
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {categories?.map((cat, i) => (
           <motion.div key={cat.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
             <Link to={`/categories/${cat.id}`}>
               <Card className="cursor-pointer border-border/50 transition-all hover:border-primary/30 hover:shadow-lg">
-                <CardContent className="flex items-center gap-4 p-5">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                    {categoryIcons[cat.icon || ''] || <Heart className="h-6 w-6" />}
+                <CardContent className="flex items-center gap-3 sm:gap-4 p-4 sm:p-5">
+                  <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    {categoryIcons[cat.icon || ''] || <Heart className="h-5 w-5 sm:h-6 sm:w-6" />}
                   </div>
                   <div>
-                    <h3 className="font-semibold text-foreground">{getCategoryName(cat)}</h3>
+                    <h3 className="text-sm sm:text-base font-semibold text-foreground">{getCategoryName(cat)}</h3>
                   </div>
                 </CardContent>
               </Card>

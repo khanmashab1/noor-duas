@@ -42,13 +42,13 @@ const HomePage = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-primary py-20 text-primary-foreground islamic-pattern">
+      <section className="relative overflow-hidden bg-primary py-12 sm:py-20 text-primary-foreground islamic-pattern">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/90 to-primary" />
-        <div className="container relative z-10 text-center">
+        <div className="container relative z-10 px-4 sm:px-6 text-center">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <span className="mb-4 inline-block text-5xl">🕌</span>
-            <h1 className="font-display text-3xl font-bold leading-tight md:text-5xl">{t('heroTitle')}</h1>
-            <p className="mt-4 text-lg opacity-90 md:text-xl">{t('heroSubtitle')}</p>
+            <span className="mb-4 inline-block text-4xl sm:text-5xl">🕌</span>
+            <h1 className="font-display text-2xl sm:text-3xl md:text-5xl font-bold leading-tight">{t('heroTitle')}</h1>
+            <p className="mt-3 sm:mt-4 text-base sm:text-lg md:text-xl opacity-90">{t('heroSubtitle')}</p>
           </motion.div>
 
           {/* Quick Access Buttons */}
@@ -56,12 +56,12 @@ const HomePage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.5 }}
-            className="mt-10 flex flex-wrap justify-center gap-3"
+            className="mt-6 sm:mt-10 flex flex-wrap justify-center gap-2 sm:gap-3"
           >
             {categories?.slice(0, 5).map((cat) => (
               <Link key={cat.id} to={`/categories/${cat.id}`}>
-                <Button variant="secondary" size="lg" className="gap-2 shadow-md">
-                  {categoryIcons[cat.icon || ''] || <Heart className="h-5 w-5" />}
+                <Button variant="secondary" size="sm" className="gap-1.5 sm:gap-2 shadow-md text-xs sm:text-sm sm:h-10 sm:px-4">
+                  {categoryIcons[cat.icon || ''] || <Heart className="h-4 w-4 sm:h-5 sm:w-5" />}
                   {getCategoryName(cat)}
                 </Button>
               </Link>
@@ -72,17 +72,17 @@ const HomePage = () => {
 
       {/* Daily Dua */}
       {randomDua && (
-        <section className="container py-12">
-          <h2 className="mb-6 font-display text-2xl font-bold text-foreground">{t('dailyDua')}</h2>
+        <section className="container px-4 sm:px-6 py-8 sm:py-12">
+          <h2 className="mb-4 sm:mb-6 font-display text-xl sm:text-2xl font-bold text-foreground">{t('dailyDua')}</h2>
           <DuaCard dua={randomDua} />
         </section>
       )}
 
       {/* Categories Grid */}
-      <section className="bg-muted/30 py-12 islamic-pattern dark:islamic-pattern-dark">
-        <div className="container">
-          <h2 className="mb-8 font-display text-2xl font-bold text-foreground">{t('categories')}</h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <section className="bg-muted/30 py-8 sm:py-12 islamic-pattern dark:islamic-pattern-dark">
+        <div className="container px-4 sm:px-6">
+          <h2 className="mb-6 sm:mb-8 font-display text-xl sm:text-2xl font-bold text-foreground">{t('categories')}</h2>
+          <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {categories?.map((cat, i) => (
               <motion.div
                 key={cat.id}
@@ -92,12 +92,12 @@ const HomePage = () => {
               >
                 <Link to={`/categories/${cat.id}`}>
                   <Card className="cursor-pointer border-border/50 transition-all hover:border-primary/30 hover:shadow-lg">
-                    <CardContent className="flex items-center gap-4 p-5">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                        {categoryIcons[cat.icon || ''] || <Heart className="h-6 w-6" />}
+                    <CardContent className="flex items-center gap-3 sm:gap-4 p-4 sm:p-5">
+                      <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                        {categoryIcons[cat.icon || ''] || <Heart className="h-5 w-5 sm:h-6 sm:w-6" />}
                       </div>
                       <div>
-                        <h3 className="font-semibold text-foreground">{getCategoryName(cat)}</h3>
+                        <h3 className="text-sm sm:text-base font-semibold text-foreground">{getCategoryName(cat)}</h3>
                       </div>
                     </CardContent>
                   </Card>
@@ -110,8 +110,8 @@ const HomePage = () => {
 
       {/* Popular Duas */}
       {popularDuas.length > 0 && (
-        <section className="container py-12">
-          <h2 className="mb-6 font-display text-2xl font-bold text-foreground">{t('popularDuas')}</h2>
+        <section className="container px-4 sm:px-6 py-8 sm:py-12">
+          <h2 className="mb-4 sm:mb-6 font-display text-xl sm:text-2xl font-bold text-foreground">{t('popularDuas')}</h2>
           <div className="space-y-4">
             {popularDuas.map((dua) => (
               <DuaCard key={dua.id} dua={dua} />
@@ -121,10 +121,10 @@ const HomePage = () => {
       )}
 
       {/* Tasbeeh Preview */}
-      <section className="bg-primary/5 py-12">
-        <div className="container text-center">
-          <h2 className="mb-4 font-display text-2xl font-bold text-foreground">{t('tasbeeh')}</h2>
-          <p className="mb-6 text-muted-foreground">Digital Tasbeeh Counter for daily dhikr</p>
+      <section className="bg-primary/5 py-8 sm:py-12">
+        <div className="container px-4 sm:px-6 text-center">
+          <h2 className="mb-3 sm:mb-4 font-display text-xl sm:text-2xl font-bold text-foreground">{t('tasbeeh')}</h2>
+          <p className="mb-4 sm:mb-6 text-sm sm:text-base text-muted-foreground">Digital Tasbeeh Counter for daily dhikr</p>
           <Link to="/tasbeeh">
             <Button size="lg" className="gap-2">📿 {t('tasbeeh')} {t('counter')}</Button>
           </Link>
