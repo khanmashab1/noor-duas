@@ -161,7 +161,7 @@ interface PrayerInfo {
   name: { en: string; ar: string; ur: string };
   time: { en: string; ar: string; ur: string };
   rakaat: string;
-  sunnah: string;
+  sunnah: { en: string; ar: string; ur: string };
 }
 
 const prayers: PrayerInfo[] = [
@@ -169,31 +169,31 @@ const prayers: PrayerInfo[] = [
     name: { en: 'Fajr', ar: 'الفجر', ur: 'فجر' },
     time: { en: 'Before Sunrise', ar: 'قبل الشروق', ur: 'طلوعِ آفتاب سے پہلے' },
     rakaat: '2',
-    sunnah: '2 before'
+    sunnah: { en: '2 Sunnah before', ar: '٢ سنة قبلية', ur: '2 سنت پہلے' }
   },
   {
     name: { en: 'Dhuhr', ar: 'الظهر', ur: 'ظہر' },
     time: { en: 'After Midday', ar: 'بعد الزوال', ur: 'دوپہر کے بعد' },
     rakaat: '4',
-    sunnah: '4 before, 2 after'
+    sunnah: { en: '4 Sunnah before, 2 after', ar: '٤ سنة قبلية، ٢ بعدية', ur: '4 سنت پہلے، 2 بعد' }
   },
   {
     name: { en: 'Asr', ar: 'العصر', ur: 'عصر' },
     time: { en: 'Afternoon', ar: 'العصر', ur: 'دوپہر بعد' },
     rakaat: '4',
-    sunnah: '4 before (optional)'
+    sunnah: { en: '4 Sunnah before (optional)', ar: '٤ سنة قبلية (اختيارية)', ur: '4 سنت پہلے (غیر مؤکدہ)' }
   },
   {
     name: { en: 'Maghrib', ar: 'المغرب', ur: 'مغرب' },
     time: { en: 'After Sunset', ar: 'بعد الغروب', ur: 'غروبِ آفتاب کے بعد' },
     rakaat: '3',
-    sunnah: '2 after'
+    sunnah: { en: '2 Sunnah after', ar: '٢ سنة بعدية', ur: '2 سنت بعد' }
   },
   {
     name: { en: 'Isha', ar: 'العشاء', ur: 'عشاء' },
     time: { en: 'Night', ar: 'الليل', ur: 'رات' },
     rakaat: '4',
-    sunnah: '2 after + 3 Witr'
+    sunnah: { en: '2 Sunnah after + 3 Witr', ar: '٢ سنة بعدية + ٣ وتر', ur: '2 سنت بعد + 3 وتر' }
   }
 ];
 
@@ -246,6 +246,9 @@ const NamazPage = () => {
                   <p className="text-xs text-muted-foreground mt-1">{getName(prayer.time)}</p>
                   <div className="mt-3 text-2xl font-bold text-primary">{prayer.rakaat}</div>
                   <p className="text-xs text-muted-foreground">{lang === 'en' ? 'Fard Rakaat' : lang === 'ar' ? 'ركعات فرض' : 'فرض رکعات'}</p>
+                  <div className="mt-2 pt-2 border-t border-border/30">
+                    <p className="text-xs font-medium text-primary/80">{getName(prayer.sunnah)}</p>
+                  </div>
                 </CardContent>
               </Card>
             </motion.div>
@@ -273,7 +276,7 @@ const NamazPage = () => {
                     </div>
                     <div>
                       <span className="font-semibold text-foreground">{lang === 'en' ? 'Sunnah' : 'سنت'}:</span>
-                      <span className="text-muted-foreground ml-2">{prayers[selectedPrayer].sunnah}</span>
+                      <span className="text-muted-foreground ml-2">{getName(prayers[selectedPrayer].sunnah)}</span>
                     </div>
                   </div>
                 </CardContent>
