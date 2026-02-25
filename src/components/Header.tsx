@@ -58,7 +58,7 @@ export const Header = () => {
       <div className="container flex h-16 items-center justify-between gap-2">
         <Link to="/" className="flex shrink-0 items-center gap-2">
           <span className="text-2xl">🌙</span>
-          <span className="font-display text-xl font-bold text-primary hidden sm:inline">{t('appName')}</span>
+          <span className="font-display text-lg sm:text-xl font-bold text-primary">{t('appName')}</span>
         </Link>
 
         {/* Desktop Nav */}
