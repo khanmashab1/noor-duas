@@ -89,11 +89,10 @@ const prayerSteps: PrayerStep[] = [
   {
     id: 5,
     name: { en: 'Tashahhud (Sitting)', ar: 'التشهد', ur: 'تشہد / قعدہ' },
-    
     description: {
-      en: 'After the 2nd and last rakah, sit and recite Tashahhud. Point the index finger of the right hand during the declaration of faith. In the final sitting, also recite Durood and a final dua before Salam.',
-      ar: 'بعد الركعة الثانية والأخيرة، اجلس واقرأ التشهد. أشر بسبابة اليد اليمنى عند الشهادة. في الجلسة الأخيرة، اقرأ أيضًا الصلاة الإبراهيمية ودعاء قبل السلام.',
-      ur: 'دوسری اور آخری رکعت کے بعد بیٹھ کر تشہد پڑھیں۔ شہادت کی انگلی سے اشارہ کریں۔ آخری قعدے میں درود شریف اور سلام سے پہلے دعا بھی پڑھیں۔'
+      en: 'After the 2nd and last rakah, sit and recite Tashahhud (At-Tahiyyat). Point the index finger of the right hand during the declaration of faith.',
+      ar: 'بعد الركعة الثانية والأخيرة، اجلس واقرأ التشهد (التحيات). أشر بسبابة اليد اليمنى عند الشهادة.',
+      ur: 'دوسری اور آخری رکعت کے بعد بیٹھ کر تشہد (التحیات) پڑھیں۔ شہادت کی انگلی سے اشارہ کریں۔'
     },
     dua: {
       arabic: 'التَّحِيَّاتُ لِلَّهِ وَالصَّلَوَاتُ وَالطَّيِّبَاتُ، السَّلَامُ عَلَيْكَ أَيُّهَا النَّبِيُّ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ، السَّلَامُ عَلَيْنَا وَعَلَى عِبَادِ اللَّهِ الصَّالِحِينَ، أَشْهَدُ أَنْ لَا إِلٰهَ إِلَّا اللَّهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ',
@@ -106,6 +105,40 @@ const prayerSteps: PrayerStep[] = [
   },
   {
     id: 6,
+    name: { en: 'Durood Ibrahim', ar: 'الصلاة الإبراهيمية', ur: 'درود ابراہیمی' },
+    description: {
+      en: 'In the final sitting (Qa\'dah Akhirah), after reciting Tashahhud, recite Durood Ibrahim (Salawat upon the Prophet ﷺ). This is obligatory in the last rakah.',
+      ar: 'في الجلسة الأخيرة (القعدة الأخيرة)، بعد قراءة التشهد، اقرأ الصلاة الإبراهيمية. وهي واجبة في الركعة الأخيرة.',
+      ur: 'آخری قعدے میں تشہد کے بعد درود ابراہیمی پڑھیں۔ یہ آخری رکعت میں واجب ہے۔'
+    },
+    dua: {
+      arabic: 'اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا صَلَّيْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ، اللَّهُمَّ بَارِكْ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا بَارَكْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ',
+      transliteration: 'Allahumma salli \'ala Muhammadin wa \'ala aali Muhammadin kama sallaita \'ala Ibrahima wa \'ala aali Ibrahima innaka Hameedun Majeed. Allahumma barik \'ala Muhammadin wa \'ala aali Muhammadin kama barakta \'ala Ibrahima wa \'ala aali Ibrahima innaka Hameedun Majeed.',
+      translation: {
+        en: 'O Allah, send blessings upon Muhammad and upon the family of Muhammad, as You sent blessings upon Ibrahim and the family of Ibrahim. Indeed, You are Praiseworthy, Glorious. O Allah, bless Muhammad and the family of Muhammad, as You blessed Ibrahim and the family of Ibrahim. Indeed, You are Praiseworthy, Glorious.',
+        ur: 'اے اللہ! رحمت نازل فرما محمد ﷺ پر اور آلِ محمد پر جیسے تو نے رحمت نازل فرمائی ابراہیم پر اور آلِ ابراہیم پر، بے شک تو تعریف والا بزرگی والا ہے۔ اے اللہ! برکت نازل فرما محمد ﷺ پر اور آلِ محمد پر جیسے تو نے برکت نازل فرمائی ابراہیم پر اور آلِ ابراہیم پر، بے شک تو تعریف والا بزرگی والا ہے۔'
+      }
+    }
+  },
+  {
+    id: 7,
+    name: { en: 'Dua before Salam', ar: 'الدعاء قبل السلام', ur: 'سلام سے پہلے دعا' },
+    description: {
+      en: 'After Durood Ibrahim, recite this dua (Dua Masura) before ending the prayer with Salam. This is from Surah Al-Baqarah (2:201) and is authentically reported in Sahih Bukhari & Muslim.',
+      ar: 'بعد الصلاة الإبراهيمية، اقرأ هذا الدعاء (دعاء ماثورة) قبل إنهاء الصلاة بالسلام. هذا من سورة البقرة (٢:٢٠١) وثابت في صحيح البخاري ومسلم.',
+      ur: 'درود ابراہیمی کے بعد سلام سے پہلے یہ دعا (دعائے ماثورہ) پڑھیں۔ یہ سورۃ البقرہ (٢:٢٠١) سے ہے اور صحیح بخاری و مسلم میں ثابت ہے۔'
+    },
+    dua: {
+      arabic: 'رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ',
+      transliteration: 'Rabbana atina fid-dunya hasanatan wa fil-akhirati hasanatan wa qina \'adhaban-nar.',
+      translation: {
+        en: 'Our Lord, give us good in this world and good in the Hereafter, and save us from the punishment of the Fire.',
+        ur: 'اے ہمارے رب! ہمیں دنیا میں بھی بھلائی دے اور آخرت میں بھی بھلائی دے اور ہمیں آگ کے عذاب سے بچا۔'
+      }
+    }
+  },
+  {
+    id: 8,
     name: { en: 'Salam (Ending)', ar: 'السلام', ur: 'سلام' },
     
     description: {
