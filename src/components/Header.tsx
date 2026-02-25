@@ -171,7 +171,7 @@ export const Header = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Link to="/auth">
+            <Link to="/auth" className="hidden lg:block">
               <Button variant="default" size="sm">{t('login')}</Button>
             </Link>
           )}
@@ -235,6 +235,11 @@ export const Header = () => {
             {user && (
               <Link to="/favorites" onClick={() => setMobileOpen(false)} className="rounded-md px-3 py-2 text-sm font-medium text-foreground/70">
                 <Heart className="inline h-4 w-4 ltr:mr-1 rtl:ml-1" />{t('favorites')}
+              </Link>
+            )}
+            {!user && (
+              <Link to="/auth" onClick={() => setMobileOpen(false)}>
+                <Button variant="default" size="sm" className="w-full mt-2">{t('login')}</Button>
               </Link>
             )}
           </div>
