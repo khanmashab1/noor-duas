@@ -1,6 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Locate, Clock, Settings2, ChevronDown, CalendarDays, Bell, Minus, Plus, Download } from 'lucide-react';
+
+function to12Hr(time24: string): string {
+  const [h, m] = time24.split(':').map(Number);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const hr = h % 12 || 12;
+  return `${hr}:${String(m).padStart(2, '0')} ${ampm}`;
+}
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -38,7 +45,7 @@ const PrayerTimeCard = ({
           <h3 className="font-display text-base font-bold text-foreground mt-1">{info.en}</h3>
           <p className="text-xs text-muted-foreground font-urdu">{info.ur}</p>
           <p className={`text-xl font-bold mt-2 tabular-nums ${isNext ? 'text-primary' : 'text-foreground'}`}>
-            {time}
+            {to12Hr(time)}
           </p>
           {isNext && countdown && (
             <p className="text-xs text-primary font-mono mt-1 tabular-nums">{countdown}</p>
@@ -59,6 +66,7 @@ export const PrayerTimes = () => {
   const [countdown, setCountdown] = useState('');
   const [showSettings, setShowSettings] = useState(false);
   const [showMonthly, setShowMonthly] = useState(false);
+  const monthlyRef = useRef<HTMLDivElement>(null);
   const [monthlyData, setMonthlyData] = useState<any[]>([]);
   const [monthlyLoading, setMonthlyLoading] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -108,6 +116,7 @@ export const PrayerTimes = () => {
     setMonthlyData(data);
     setShowMonthly(true);
     setMonthlyLoading(false);
+    setTimeout(() => monthlyRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
   };
 
   const downloadPDF = async () => {
@@ -125,7 +134,7 @@ export const PrayerTimes = () => {
     autoTable(doc, {
       startY: 40,
       head: [['Date', 'Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha']],
-      body: monthlyData.map(day => [day.date, day.Fajr, day.Sunrise, day.Dhuhr, day.Asr, day.Maghrib, day.Isha]),
+      body: monthlyData.map(day => [day.date, to12Hr(day.Fajr), to12Hr(day.Sunrise), to12Hr(day.Dhuhr), to12Hr(day.Asr), to12Hr(day.Maghrib), to12Hr(day.Isha)]),
       styles: { fontSize: 9, cellPadding: 3 },
       headStyles: { fillColor: [34, 120, 74] },
     });
@@ -223,7 +232,7 @@ export const PrayerTimes = () => {
               <p className="font-display font-bold text-lg text-foreground">
                 {PRAYER_INFO[nextPrayer]?.en}
                 <span className="text-muted-foreground font-normal text-sm ml-2">
-                  {times[nextPrayer as PrayerKey]}
+                  {to12Hr(times[nextPrayer as PrayerKey])}
                 </span>
               </p>
             </div>
@@ -350,6 +359,7 @@ export const PrayerTimes = () => {
       <AnimatePresence>
         {showMonthly && monthlyData.length > 0 && (
           <motion.div
+            ref={monthlyRef}
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
@@ -383,7 +393,7 @@ export const PrayerTimes = () => {
                       <tr key={i} className={`border-b border-border/30 ${i === new Date().getDate() - 1 ? 'bg-primary/5 font-semibold' : ''}`}>
                         <td className="py-2 px-2 text-xs text-foreground">{day.date}</td>
                         {PRAYER_KEYS.map(k => (
-                          <td key={k} className="py-2 px-2 text-center text-xs tabular-nums text-foreground">{day[k]}</td>
+                          <td key={k} className="py-2 px-2 text-center text-xs tabular-nums text-foreground">{to12Hr(day[k])}</td>
                         ))}
                       </tr>
                     ))}
