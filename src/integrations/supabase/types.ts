@@ -239,6 +239,92 @@ export type Database = {
         }
         Relationships: []
       }
+      stories: {
+        Row: {
+          category_id: string
+          content: string
+          content_ar: string | null
+          content_ur: string | null
+          created_at: string
+          id: string
+          image_url: string | null
+          sort_order: number | null
+          source: string | null
+          title: string
+          title_ar: string | null
+          title_ur: string | null
+          updated_at: string
+        }
+        Insert: {
+          category_id: string
+          content: string
+          content_ar?: string | null
+          content_ur?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          sort_order?: number | null
+          source?: string | null
+          title: string
+          title_ar?: string | null
+          title_ur?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string
+          content?: string
+          content_ar?: string | null
+          content_ur?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          sort_order?: number | null
+          source?: string | null
+          title?: string
+          title_ar?: string | null
+          title_ur?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "story_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      story_categories: {
+        Row: {
+          created_at: string
+          icon: string | null
+          id: string
+          name: string
+          name_ar: string | null
+          name_ur: string | null
+          sort_order: number | null
+        }
+        Insert: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name: string
+          name_ar?: string | null
+          name_ur?: string | null
+          sort_order?: number | null
+        }
+        Update: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name?: string
+          name_ar?: string | null
+          name_ur?: string | null
+          sort_order?: number | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
