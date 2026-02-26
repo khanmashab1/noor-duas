@@ -4,6 +4,7 @@ import { useI18n } from '@/lib/i18n';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Clock, BookOpen } from 'lucide-react';
+import { PrayerTimes } from '@/components/PrayerTimes';
 
 
 interface PrayerStep {
@@ -239,6 +240,9 @@ const NamazPage = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* Live Prayer Times */}
+      <PrayerTimes />
 
       {/* Prayer Times Overview */}
       <section className="container px-4 sm:px-6 py-8 sm:py-12">
