@@ -66,6 +66,7 @@ export const PrayerTimes = () => {
   const [countdown, setCountdown] = useState('');
   const [showSettings, setShowSettings] = useState(false);
   const [showMonthly, setShowMonthly] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState(false);
   const monthlyRef = useRef<HTMLDivElement>(null);
   const [monthlyData, setMonthlyData] = useState<any[]>([]);
   const [monthlyLoading, setMonthlyLoading] = useState(false);
@@ -130,6 +131,7 @@ export const PrayerTimes = () => {
   };
 
   const downloadPDF = async () => {
+    setPdfLoading(true);
     try {
       const jsPDFModule = await import('jspdf');
       const jsPDF = jsPDFModule.default || jsPDFModule.jsPDF;
@@ -230,6 +232,8 @@ export const PrayerTimes = () => {
       doc.save(`prayer-times-${settings.city}-${now.getMonth() + 1}-${now.getFullYear()}.pdf`);
     } catch (err) {
       console.error('PDF generation failed:', err);
+    } finally {
+      setPdfLoading(false);
     }
   };
 
@@ -464,9 +468,13 @@ export const PrayerTimes = () => {
                     <CalendarDays className="h-4 w-4 text-primary" />
                     {labels.monthly[lang]} — {settings.city}
                   </h3>
-                  <Button size="sm" variant="outline" className="gap-1.5" onClick={() => downloadPDF()}>
-                    <Download className="h-4 w-4" />
-                    PDF
+                  <Button size="sm" variant="outline" className="gap-1.5" onClick={() => downloadPDF()} disabled={pdfLoading}>
+                    {pdfLoading ? (
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                    ) : (
+                      <Download className="h-4 w-4" />
+                    )}
+                    {pdfLoading ? (lang === 'ur' ? 'بن رہا ہے...' : 'Generating...') : 'PDF'}
                   </Button>
                 </div>
                 <table className="w-full text-sm min-w-[600px]">
