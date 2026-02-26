@@ -109,18 +109,24 @@ export const PrayerTimes = () => {
     if (monthlyData.length > 0) { setShowMonthly(!showMonthly); return; }
     setMonthlyLoading(true);
     const now = new Date();
-    const data = await fetchMonthlyTimes(
+    const todayDate = now.getDate();
+    // Fetch current month
+    const currentMonth = await fetchMonthlyTimes(
       settings.latitude, settings.longitude, settings.method, settings.school,
       now.getMonth() + 1, now.getFullYear()
     );
-    setMonthlyData(data);
+    // Fetch next month
+    const nextDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    const nextMonth = await fetchMonthlyTimes(
+      settings.latitude, settings.longitude, settings.method, settings.school,
+      nextDate.getMonth() + 1, nextDate.getFullYear()
+    );
+    // Slice from today, take 30 days
+    const combined = [...currentMonth.slice(todayDate - 1), ...nextMonth].slice(0, 30);
+    setMonthlyData(combined);
     setShowMonthly(true);
     setMonthlyLoading(false);
-    setTimeout(() => {
-      const todayRow = document.getElementById('monthly-today-row');
-      if (todayRow) todayRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      else monthlyRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 150);
+    setTimeout(() => monthlyRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
   };
 
   const downloadPDF = async () => {
@@ -393,16 +399,14 @@ export const PrayerTimes = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {monthlyData.map((day, i) => {
-                      const isToday = i === new Date().getDate() - 1;
-                      return (
-                      <tr key={i} id={isToday ? 'monthly-today-row' : undefined} className={`border-b border-border/30 ${isToday ? 'bg-primary/10 font-semibold ring-1 ring-primary/30' : ''}`}>
+                    {monthlyData.map((day, i) => (
+                      <tr key={i} className={`border-b border-border/30 ${i === 0 ? 'bg-primary/10 font-semibold ring-1 ring-primary/30' : ''}`}>
                         <td className="py-2 px-2 text-xs text-foreground">{day.date}</td>
                         {PRAYER_KEYS.map(k => (
                           <td key={k} className="py-2 px-2 text-center text-xs tabular-nums text-foreground">{to12Hr(day[k])}</td>
                         ))}
-                      </tr>);
-                    })}
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </CardContent>
