@@ -5,10 +5,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useI18n } from '@/lib/i18n';
 import { useCategories, useAllDuas } from '@/hooks/useDuas';
 import { useRandomHadith } from '@/hooks/useHadiths';
+import { useStories } from '@/hooks/useStories';
 import { DuaCard } from '@/components/DuaCard';
 import { HadithCard } from '@/components/HadithCard';
 import { NextPrayerCountdown } from '@/components/NextPrayerCountdown';
-import { Sunrise, Sunset, Shield, Plane, Heart, Moon as MoonIcon, Coins, Gem } from 'lucide-react';
+import { Sunrise, Sunset, Shield, Plane, Heart, Moon as MoonIcon, Coins, Gem, BookOpen } from 'lucide-react';
 import { useMemo } from 'react';
 
 const categoryIcons: Record<string, React.ReactNode> = {
@@ -28,6 +29,13 @@ const HomePage = () => {
   const { data: categories } = useCategories();
   const { data: allDuas } = useAllDuas();
   const { data: dailyHadith } = useRandomHadith();
+  const { data: allStories } = useStories();
+
+  const dailyStory = useMemo(() => {
+    if (!allStories?.length) return null;
+    const idx = Math.floor(new Date().getDate() % allStories.length);
+    return allStories[idx];
+  }, [allStories]);
 
   const randomDua = useMemo(() => {
     if (!allDuas?.length) return null;
@@ -98,7 +106,51 @@ const HomePage = () => {
         </section>
       )}
 
-      {/* Categories Grid */}
+      {/* Story of the Day */}
+      {dailyStory && (
+        <section className="container px-4 sm:px-6 py-8 sm:py-12">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-primary" />
+              {lang === 'ar' ? 'قصة اليوم' : lang === 'ur' ? 'آج کا واقعہ' : 'Story of the Day'}
+            </h2>
+            <Link to="/stories">
+              <Button variant="outline" size="sm">{t('viewAll')}</Button>
+            </Link>
+          </div>
+          <Card className="border-border/50 hover:shadow-md transition-all">
+            <CardContent className="p-5 sm:p-6">
+              {dailyStory.story_categories && (
+                <span className="inline-block text-[10px] font-semibold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full mb-3">
+                  {lang === 'ar' && (dailyStory.story_categories as any).name_ar
+                    ? (dailyStory.story_categories as any).name_ar
+                    : lang === 'ur' && (dailyStory.story_categories as any).name_ur
+                    ? (dailyStory.story_categories as any).name_ur
+                    : (dailyStory.story_categories as any).name}
+                </span>
+              )}
+              <h3 className="font-display text-lg sm:text-xl font-bold text-foreground mb-3">
+                {lang === 'ar' && dailyStory.title_ar ? dailyStory.title_ar : lang === 'ur' && dailyStory.title_ur ? dailyStory.title_ur : dailyStory.title}
+              </h3>
+              <p className={`text-sm sm:text-base text-muted-foreground leading-relaxed ${lang !== 'en' ? 'font-arabic' : ''}`} dir={lang === 'en' ? 'ltr' : 'rtl'}>
+                {(() => {
+                  const content = lang === 'ar' && dailyStory.content_ar ? dailyStory.content_ar : lang === 'ur' && dailyStory.content_ur ? dailyStory.content_ur : dailyStory.content;
+                  return content.length > 300 ? content.slice(0, 300) + '...' : content;
+                })()}
+              </p>
+              {dailyStory.source && (
+                <p className="mt-3 text-xs text-accent-foreground">📖 {dailyStory.source}</p>
+              )}
+              <Link to="/stories" className="inline-block mt-3">
+                <Button variant="link" size="sm" className="px-0 gap-1">
+                  {lang === 'ur' ? 'مزید پڑھیں' : lang === 'ar' ? 'اقرأ المزيد' : 'Read More'} →
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </section>
+      )}
+
       <section className="bg-muted/30 py-8 sm:py-12 islamic-pattern dark:islamic-pattern-dark">
         <div className="container px-4 sm:px-6">
           <h2 className="mb-6 sm:mb-8 font-display text-xl sm:text-2xl font-bold text-foreground">{t('categories')}</h2>
