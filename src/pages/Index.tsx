@@ -79,11 +79,8 @@ const HomePage = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-primary/90 to-primary" />
         <div className="container relative z-10 px-4 sm:px-6 text-center">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <span className="mb-4 inline-block text-4xl sm:text-5xl">🕌</span>
-            <h1 className="font-display text-2xl sm:text-3xl md:text-5xl font-bold leading-tight">{t('heroTitle')}</h1>
-            <p className="mt-3 sm:mt-4 text-base sm:text-lg md:text-xl opacity-90">{t('heroSubtitle')}</p>
             {hijriDate && (
-              <div className="mt-3 inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 text-sm sm:text-base">
+              <div className="mb-4 inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-2 text-sm sm:text-base border border-white/20">
                 <span>🌙</span>
                 <span className="font-arabic">{hijriDate.weekdayAr}</span>
                 <span className="opacity-50">|</span>
@@ -92,6 +89,9 @@ const HomePage = () => {
                 <span className="font-arabic">{hijriDate.monthAr}</span>
               </div>
             )}
+            <span className="mb-4 inline-block text-4xl sm:text-5xl">🕌</span>
+            <h1 className="font-display text-2xl sm:text-3xl md:text-5xl font-bold leading-tight">{t('heroTitle')}</h1>
+            <p className="mt-3 sm:mt-4 text-base sm:text-lg md:text-xl opacity-90">{t('heroSubtitle')}</p>
           </motion.div>
 
           {/* Quick Access Buttons */}
