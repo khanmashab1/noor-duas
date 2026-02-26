@@ -80,16 +80,16 @@ const HomePage = () => {
         <div className="container relative z-10 px-4 sm:px-6 text-center">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             {hijriDate && (
-              <div className="mb-4 inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-2 text-sm sm:text-base border border-white/20">
+              <div className="mb-5 inline-flex flex-wrap items-center justify-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-5 py-2.5 text-sm sm:text-base border border-white/20 shadow-lg">
                 <span>🌙</span>
-                <span className="font-arabic">{hijriDate.weekdayAr}</span>
-                <span className="opacity-50">|</span>
                 <span className="font-semibold">{hijriDate.weekday}, {hijriDate.day} {hijriDate.month} {hijriDate.year} AH</span>
-                <span className="opacity-50">|</span>
-                <span className="font-arabic">{hijriDate.monthAr}</span>
+                <span className="opacity-40">|</span>
+                <span className="font-arabic text-base">{hijriDate.weekdayAr} — {hijriDate.monthAr}</span>
               </div>
             )}
-            <span className="mb-4 inline-block text-4xl sm:text-5xl">🕌</span>
+            <div>
+              <span className="mb-4 inline-block text-4xl sm:text-5xl">🕌</span>
+            </div>
             <h1 className="font-display text-2xl sm:text-3xl md:text-5xl font-bold leading-tight">{t('heroTitle')}</h1>
             <p className="mt-3 sm:mt-4 text-base sm:text-lg md:text-xl opacity-90">{t('heroSubtitle')}</p>
           </motion.div>
