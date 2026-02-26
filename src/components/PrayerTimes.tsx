@@ -135,7 +135,8 @@ export const PrayerTimes = () => {
     try {
       const jsPDFModule = await import('jspdf');
       const jsPDF = jsPDFModule.default || jsPDFModule.jsPDF;
-      await import('jspdf-autotable');
+      const autoTableModule = await import('jspdf-autotable');
+      const autoTable = autoTableModule.default || autoTableModule.autoTable;
       const doc = new jsPDF({ orientation: 'landscape' });
       const w = doc.internal.pageSize.getWidth();
       const h = doc.internal.pageSize.getHeight();
@@ -176,8 +177,8 @@ export const PrayerTimes = () => {
       doc.text('"Indeed, prayer has been decreed upon the believers at specified times." \u2014 Quran 4:103', w / 2, 52, { align: 'center' });
       doc.setFont('helvetica', 'normal');
 
-      // Table using autoTable on doc instance
-      (doc as any).autoTable({
+      // Table
+      autoTable(doc, {
         startY: 58,
         head: [['Date', 'Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha']],
         body: monthlyData.map(day => [day.date, to12Hr(day.Fajr), to12Hr(day.Sunrise), to12Hr(day.Dhuhr), to12Hr(day.Asr), to12Hr(day.Maghrib), to12Hr(day.Isha)]),
