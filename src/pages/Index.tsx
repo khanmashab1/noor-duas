@@ -27,7 +27,7 @@ const categoryIcons: Record<string, React.ReactNode> = {
 const HomePage = () => {
   const { t, lang } = useI18n();
   const [storyExpanded, setStoryExpanded] = useState(false);
-  const [hijriDate, setHijriDate] = useState<{ day: string; month: string; monthAr: string; year: string } | null>(null);
+  const [hijriDate, setHijriDate] = useState<{ day: string; weekday: string; weekdayAr: string; month: string; monthAr: string; year: string } | null>(null);
 
   useEffect(() => {
     const today = new Date();
@@ -39,7 +39,7 @@ const HomePage = () => {
       .then(d => {
         if (d.code === 200) {
           const h = d.data.hijri;
-          setHijriDate({ day: h.day, month: h.month.en, monthAr: h.month.ar, year: h.year });
+          setHijriDate({ day: h.day, weekday: h.weekday.en, weekdayAr: h.weekday.ar, month: h.month.en, monthAr: h.month.ar, year: h.year });
         }
       })
       .catch(() => {});
@@ -85,8 +85,10 @@ const HomePage = () => {
             {hijriDate && (
               <div className="mt-3 inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 text-sm sm:text-base">
                 <span>🌙</span>
-                <span className="font-semibold">{hijriDate.day} {hijriDate.month} {hijriDate.year} AH</span>
-                <span className="opacity-70">—</span>
+                <span className="font-arabic">{hijriDate.weekdayAr}</span>
+                <span className="opacity-50">|</span>
+                <span className="font-semibold">{hijriDate.weekday}, {hijriDate.day} {hijriDate.month} {hijriDate.year} AH</span>
+                <span className="opacity-50">|</span>
                 <span className="font-arabic">{hijriDate.monthAr}</span>
               </div>
             )}
