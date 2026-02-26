@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Locate, Clock, Settings2, ChevronDown, CalendarDays, Bell, Minus, Plus } from 'lucide-react';
+import { MapPin, Locate, Clock, Settings2, ChevronDown, CalendarDays, Bell, Minus, Plus, Download } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -108,6 +108,28 @@ export const PrayerTimes = () => {
     setMonthlyData(data);
     setShowMonthly(true);
     setMonthlyLoading(false);
+  };
+
+  const downloadPDF = async () => {
+    const { default: jsPDF } = await import('jspdf');
+    const autoTable = (await import('jspdf-autotable')).default;
+    const doc = new jsPDF({ orientation: 'landscape' });
+    const now = new Date();
+    const monthName = now.toLocaleString('en', { month: 'long', year: 'numeric' });
+    doc.setFontSize(18);
+    doc.text(`Prayer Timetable - ${settings.city}`, 14, 20);
+    doc.setFontSize(12);
+    doc.text(monthName, 14, 28);
+    doc.setFontSize(9);
+    doc.text(`Method: ${settings.method === 1 ? 'Karachi' : 'Umm al-Qura'} | Asr: ${settings.school === 1 ? 'Hanafi' : 'Shafi'}`, 14, 34);
+    autoTable(doc, {
+      startY: 40,
+      head: [['Date', 'Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha']],
+      body: monthlyData.map(day => [day.date, day.Fajr, day.Sunrise, day.Dhuhr, day.Asr, day.Maghrib, day.Isha]),
+      styles: { fontSize: 9, cellPadding: 3 },
+      headStyles: { fillColor: [34, 120, 74] },
+    });
+    doc.save(`prayer-times-${settings.city}-${now.getMonth() + 1}-${now.getFullYear()}.pdf`);
   };
 
   const selectCity = (cityName: string) => {
@@ -335,10 +357,16 @@ export const PrayerTimes = () => {
           >
             <Card className="border-border/50">
               <CardContent className="p-4 overflow-x-auto">
-                <h3 className="font-display font-bold text-foreground mb-4 flex items-center gap-2">
-                  <CalendarDays className="h-4 w-4 text-primary" />
-                  {labels.monthly[lang]} — {settings.city}
-                </h3>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-display font-bold text-foreground flex items-center gap-2">
+                    <CalendarDays className="h-4 w-4 text-primary" />
+                    {labels.monthly[lang]} — {settings.city}
+                  </h3>
+                  <Button size="sm" variant="outline" className="gap-1.5" onClick={() => downloadPDF()}>
+                    <Download className="h-4 w-4" />
+                    PDF
+                  </Button>
+                </div>
                 <table className="w-full text-sm min-w-[600px]">
                   <thead>
                     <tr className="border-b border-border">
