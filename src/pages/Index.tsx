@@ -7,6 +7,7 @@ import { useCategories, useAllDuas } from '@/hooks/useDuas';
 import { useRandomHadith } from '@/hooks/useHadiths';
 import { DuaCard } from '@/components/DuaCard';
 import { HadithCard } from '@/components/HadithCard';
+import { NextPrayerCountdown } from '@/components/NextPrayerCountdown';
 import { Sunrise, Sunset, Shield, Plane, Heart, Moon as MoonIcon, Coins, Gem } from 'lucide-react';
 import { useMemo } from 'react';
 
@@ -44,6 +45,9 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen">
+      {/* Next Prayer Countdown */}
+      <NextPrayerCountdown />
+
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-primary py-12 sm:py-20 text-primary-foreground islamic-pattern">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/90 to-primary" />
