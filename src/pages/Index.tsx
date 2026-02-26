@@ -34,11 +34,11 @@ const HomePage = () => {
     const dd = String(today.getDate()).padStart(2, '0');
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const yyyy = today.getFullYear();
-    fetch(`https://api.aladhan.com/v1/gpiDate/${dd}-${mm}-${yyyy}`)
+    fetch(`https://api.aladhan.com/v1/timings/${dd}-${mm}-${yyyy}?latitude=33.6844&longitude=73.0479&method=1`)
       .then(r => r.json())
       .then(d => {
         if (d.code === 200) {
-          const h = d.data.hijri;
+          const h = d.data.date.hijri;
           setHijriDate({ day: h.day, weekday: h.weekday.en, weekdayAr: h.weekday.ar, month: h.month.en, monthAr: h.month.ar, year: h.year });
         }
       })
