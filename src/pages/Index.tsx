@@ -10,7 +10,7 @@ import { DuaCard } from '@/components/DuaCard';
 import { HadithCard } from '@/components/HadithCard';
 import { NextPrayerCountdown } from '@/components/NextPrayerCountdown';
 import { Sunrise, Sunset, Shield, Plane, Heart, Moon as MoonIcon, Coins, Gem, BookOpen } from 'lucide-react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 const categoryIcons: Record<string, React.ReactNode> = {
   sunrise: <Sunrise className="h-6 w-6" />,
@@ -26,6 +26,7 @@ const categoryIcons: Record<string, React.ReactNode> = {
 
 const HomePage = () => {
   const { t, lang } = useI18n();
+  const [storyExpanded, setStoryExpanded] = useState(false);
   const { data: categories } = useCategories();
   const { data: allDuas } = useAllDuas();
   const { data: dailyHadith } = useRandomHadith();
@@ -135,17 +136,31 @@ const HomePage = () => {
               <p className={`text-sm sm:text-base text-muted-foreground leading-relaxed ${lang !== 'en' ? 'font-arabic' : ''}`} dir={lang === 'en' ? 'ltr' : 'rtl'}>
                 {(() => {
                   const content = lang === 'ar' && dailyStory.content_ar ? dailyStory.content_ar : lang === 'ur' && dailyStory.content_ur ? dailyStory.content_ur : dailyStory.content;
-                  return content.length > 300 ? content.slice(0, 300) + '...' : content;
+                  if (!storyExpanded && content.length > 300) {
+                    return (
+                      <>
+                        {content.slice(0, 300)}...
+                        <button onClick={() => setStoryExpanded(true)} className="text-primary font-medium ml-1 hover:underline">
+                          {lang === 'ur' ? 'مزید پڑھیں' : lang === 'ar' ? 'اقرأ المزيد' : 'Read More'}
+                        </button>
+                      </>
+                    );
+                  }
+                  return (
+                    <>
+                      {content}
+                      {content.length > 300 && (
+                        <button onClick={() => setStoryExpanded(false)} className="text-primary font-medium ml-1 hover:underline block mt-2">
+                          {lang === 'ur' ? 'کم پڑھیں' : lang === 'ar' ? 'أقل' : 'Read Less'}
+                        </button>
+                      )}
+                    </>
+                  );
                 })()}
               </p>
               {dailyStory.source && (
                 <p className="mt-3 text-xs text-accent-foreground">📖 {dailyStory.source}</p>
               )}
-              <Link to="/stories" className="inline-block mt-3">
-                <Button variant="link" size="sm" className="px-0 gap-1">
-                  {lang === 'ur' ? 'مزید پڑھیں' : lang === 'ar' ? 'اقرأ المزيد' : 'Read More'} →
-                </Button>
-              </Link>
             </CardContent>
           </Card>
         </section>
