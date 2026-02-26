@@ -130,112 +130,107 @@ export const PrayerTimes = () => {
   };
 
   const downloadPDF = async () => {
-    const { default: jsPDF } = await import('jspdf');
-    const autoTable = (await import('jspdf-autotable')).default;
-    const doc = new jsPDF({ orientation: 'landscape' });
-    const w = doc.internal.pageSize.getWidth();
-    const h = doc.internal.pageSize.getHeight();
-    const now = new Date();
-    const monthName = now.toLocaleString('en', { month: 'long', year: 'numeric' });
+    try {
+      const jsPDFModule = await import('jspdf');
+      const jsPDF = jsPDFModule.default || jsPDFModule.jsPDF;
+      await import('jspdf-autotable');
+      const doc = new jsPDF({ orientation: 'landscape' });
+      const w = doc.internal.pageSize.getWidth();
+      const h = doc.internal.pageSize.getHeight();
+      const now = new Date();
+      const monthName = now.toLocaleString('en', { month: 'long', year: 'numeric' });
 
-    // Colors
-    const green: [number, number, number] = [34, 120, 74];
-    const darkGreen: [number, number, number] = [20, 80, 50];
-    const gold: [number, number, number] = [184, 148, 68];
-    const lightGreen: [number, number, number] = [240, 248, 243];
+      // Colors
+      const green: [number, number, number] = [34, 120, 74];
+      const darkGreen: [number, number, number] = [20, 80, 50];
+      const gold: [number, number, number] = [184, 148, 68];
+      const lightGreen: [number, number, number] = [240, 248, 243];
 
-    // Header banner
-    doc.setFillColor(...green);
-    doc.rect(0, 0, w, 42, 'F');
-    // Gold accent line
-    doc.setFillColor(...gold);
-    doc.rect(0, 42, w, 2, 'F');
+      // Header banner
+      doc.setFillColor(...green);
+      doc.rect(0, 0, w, 42, 'F');
+      doc.setFillColor(...gold);
+      doc.rect(0, 42, w, 2, 'F');
 
-    // Decorative border corners
-    doc.setDrawColor(...gold);
-    doc.setLineWidth(0.5);
-    doc.line(10, 6, 30, 6); doc.line(10, 6, 10, 16);
-    doc.line(w - 10, 6, w - 30, 6); doc.line(w - 10, 6, w - 10, 16);
+      // Decorative corner lines
+      doc.setDrawColor(...gold);
+      doc.setLineWidth(0.5);
+      doc.line(10, 6, 30, 6); doc.line(10, 6, 10, 16);
+      doc.line(w - 10, 6, w - 30, 6); doc.line(w - 10, 6, w - 10, 16);
 
-    // Title
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(22);
-    doc.text('Prayer Timetable', w / 2, 16, { align: 'center' });
+      // Title
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(22);
+      doc.text('Prayer Timetable', w / 2, 16, { align: 'center' });
+      doc.setFontSize(14);
+      doc.text('\u2726 Noor Duas \u2726', w / 2, 25, { align: 'center' });
+      doc.setFontSize(10);
+      doc.text(`${settings.city} \u2022 ${monthName} \u2022 ${settings.method === 1 ? 'Karachi Method' : 'Umm al-Qura'} \u2022 ${settings.school === 1 ? 'Hanafi' : 'Shafi'}`, w / 2, 34, { align: 'center' });
 
-    // Bismillah
-    doc.setFontSize(14);
-    doc.text('\u2726 Noor Duas \u2726', w / 2, 25, { align: 'center' });
+      // Quran quote
+      doc.setTextColor(...darkGreen);
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'italic');
+      doc.text('"Indeed, prayer has been decreed upon the believers at specified times." \u2014 Quran 4:103', w / 2, 52, { align: 'center' });
+      doc.setFont('helvetica', 'normal');
 
-    // City & date
-    doc.setFontSize(10);
-    doc.text(`${settings.city} \u2022 ${monthName} \u2022 ${settings.method === 1 ? 'Karachi Method' : 'Umm al-Qura'} \u2022 ${settings.school === 1 ? 'Hanafi' : 'Shafi'}`, w / 2, 34, { align: 'center' });
+      // Table using autoTable on doc instance
+      (doc as any).autoTable({
+        startY: 58,
+        head: [['Date', 'Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha']],
+        body: monthlyData.map(day => [day.date, to12Hr(day.Fajr), to12Hr(day.Sunrise), to12Hr(day.Dhuhr), to12Hr(day.Asr), to12Hr(day.Maghrib), to12Hr(day.Isha)]),
+        styles: { fontSize: 8.5, cellPadding: 3, textColor: [40, 40, 40] },
+        headStyles: { fillColor: green, textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 9, halign: 'center' },
+        alternateRowStyles: { fillColor: lightGreen },
+        columnStyles: {
+          0: { fontStyle: 'bold', cellWidth: 40 },
+          1: { halign: 'center' }, 2: { halign: 'center' }, 3: { halign: 'center' },
+          4: { halign: 'center' }, 5: { halign: 'center' }, 6: { halign: 'center' },
+        },
+        margin: { left: 14, right: 14 },
+      });
 
-    // Islamic quote above table
-    doc.setTextColor(...darkGreen);
-    doc.setFontSize(9);
-    doc.setFont('helvetica', 'italic');
-    doc.text('"Indeed, prayer has been decreed upon the believers at specified times." \u2014 Quran 4:103', w / 2, 52, { align: 'center' });
-    doc.setFont('helvetica', 'normal');
+      const finalY = (doc as any).lastAutoTable?.finalY || h - 50;
+      const footerY = Math.min(finalY + 10, h - 30);
 
-    // Table
-    autoTable(doc, {
-      startY: 58,
-      head: [['Date', 'Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha']],
-      body: monthlyData.map(day => [day.date, to12Hr(day.Fajr), to12Hr(day.Sunrise), to12Hr(day.Dhuhr), to12Hr(day.Asr), to12Hr(day.Maghrib), to12Hr(day.Isha)]),
-      styles: { fontSize: 8.5, cellPadding: 3, textColor: [40, 40, 40] },
-      headStyles: { fillColor: green, textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 9, halign: 'center' },
-      alternateRowStyles: { fillColor: lightGreen },
-      columnStyles: {
-        0: { fontStyle: 'bold', cellWidth: 40 },
-        1: { halign: 'center' }, 2: { halign: 'center' }, 3: { halign: 'center' },
-        4: { halign: 'center' }, 5: { halign: 'center' }, 6: { halign: 'center' },
-      },
-      margin: { left: 14, right: 14 },
-    });
+      doc.setFillColor(...gold);
+      doc.rect(14, footerY, w - 28, 0.8, 'F');
 
-    // Footer section
-    const finalY = (doc as any).lastAutoTable?.finalY || h - 50;
-    const footerY = Math.min(finalY + 10, h - 30);
+      doc.setTextColor(...darkGreen);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Essential Daily Duas', 14, footerY + 8);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(80, 80, 80);
 
-    // Gold separator
-    doc.setFillColor(...gold);
-    doc.rect(14, footerY, w - 28, 0.8, 'F');
+      const duas = [
+        'Before eating: Bismillah (In the name of Allah)',
+        'After eating: Alhamdulillahil-ladhi at\'amana wa saqana wa ja\'alana Muslimin',
+        'Entering home: Allahumma inni as\'aluka khairal-mawliji wa khairal-makhraji',
+        'Before sleeping: Bismika Allahumma amutu wa ahya',
+      ];
+      duas.forEach((dua, i) => {
+        doc.text(`\u2726 ${dua}`, 14, footerY + 14 + (i * 5));
+      });
 
-    // Popular Duas section
-    doc.setTextColor(...darkGreen);
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Essential Daily Duas', 14, footerY + 8);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8);
-    doc.setTextColor(80, 80, 80);
+      doc.setTextColor(...darkGreen);
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'italic');
+      doc.text('"The first matter that the slave will be brought to account for', w - 14, footerY + 14, { align: 'right' });
+      doc.text('on the Day of Judgment is the prayer." \u2014 Tirmidhi', w - 14, footerY + 19, { align: 'right' });
 
-    const duas = [
-      'Before eating: Bismillah (In the name of Allah)',
-      'After eating: Alhamdulillahil-ladhi at\'amana wa saqana wa ja\'alana Muslimin',
-      'Entering home: Allahumma inni as\'aluka khairal-mawliji wa khairal-makhraji',
-      'Before sleeping: Bismika Allahumma amutu wa ahya',
-    ];
-    duas.forEach((dua, i) => {
-      doc.text(`\u2726 ${dua}`, 14, footerY + 14 + (i * 5));
-    });
+      doc.setFillColor(...green);
+      doc.rect(0, h - 8, w, 8, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(7);
+      doc.setFont('helvetica', 'normal');
+      doc.text('Generated by Noor Duas', w / 2, h - 3, { align: 'center' });
 
-    // Hadith quote on the right
-    doc.setTextColor(...darkGreen);
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'italic');
-    const hadith = '"The first matter that the slave will be brought to account for\non the Day of Judgment is the prayer." \u2014 Tirmidhi';
-    doc.text(hadith, w - 14, footerY + 14, { align: 'right' });
-
-    // Bottom bar
-    doc.setFillColor(...green);
-    doc.rect(0, h - 8, w, 8, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(7);
-    doc.setFont('helvetica', 'normal');
-    doc.text('Generated by Noor Duas \u2022 noor-duas.lovable.app', w / 2, h - 3, { align: 'center' });
-
-    doc.save(`prayer-times-${settings.city}-${now.getMonth() + 1}-${now.getFullYear()}.pdf`);
+      doc.save(`prayer-times-${settings.city}-${now.getMonth() + 1}-${now.getFullYear()}.pdf`);
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+    }
   };
 
   const selectCity = (cityName: string) => {
