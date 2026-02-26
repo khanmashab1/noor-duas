@@ -10,7 +10,7 @@ import { DuaCard } from '@/components/DuaCard';
 import { HadithCard } from '@/components/HadithCard';
 import { NextPrayerCountdown } from '@/components/NextPrayerCountdown';
 import { Sunrise, Sunset, Shield, Plane, Heart, Moon as MoonIcon, Coins, Gem, BookOpen } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 
 const categoryIcons: Record<string, React.ReactNode> = {
   sunrise: <Sunrise className="h-6 w-6" />,
@@ -27,6 +27,23 @@ const categoryIcons: Record<string, React.ReactNode> = {
 const HomePage = () => {
   const { t, lang } = useI18n();
   const [storyExpanded, setStoryExpanded] = useState(false);
+  const [hijriDate, setHijriDate] = useState<{ day: string; month: string; monthAr: string; year: string } | null>(null);
+
+  useEffect(() => {
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const yyyy = today.getFullYear();
+    fetch(`https://api.aladhan.com/v1/gpiDate/${dd}-${mm}-${yyyy}`)
+      .then(r => r.json())
+      .then(d => {
+        if (d.code === 200) {
+          const h = d.data.hijri;
+          setHijriDate({ day: h.day, month: h.month.en, monthAr: h.month.ar, year: h.year });
+        }
+      })
+      .catch(() => {});
+  }, []);
   const { data: categories } = useCategories();
   const { data: allDuas } = useAllDuas();
   const { data: dailyHadith } = useRandomHadith();
@@ -65,6 +82,14 @@ const HomePage = () => {
             <span className="mb-4 inline-block text-4xl sm:text-5xl">🕌</span>
             <h1 className="font-display text-2xl sm:text-3xl md:text-5xl font-bold leading-tight">{t('heroTitle')}</h1>
             <p className="mt-3 sm:mt-4 text-base sm:text-lg md:text-xl opacity-90">{t('heroSubtitle')}</p>
+            {hijriDate && (
+              <div className="mt-3 inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 text-sm sm:text-base">
+                <span>🌙</span>
+                <span className="font-semibold">{hijriDate.day} {hijriDate.month} {hijriDate.year} AH</span>
+                <span className="opacity-70">—</span>
+                <span className="font-arabic">{hijriDate.monthAr}</span>
+              </div>
+            )}
           </motion.div>
 
           {/* Quick Access Buttons */}
