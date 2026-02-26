@@ -65,6 +65,7 @@ const translations: Translations = {
   namazSubtitle: { en: 'Complete step-by-step guide with illustrated postures & duas', ar: 'دليل خطوة بخطوة مع الأوضاع والأدعية المصورة', ur: 'مکمل مرحلہ وار رہنمائی تصاویر اور دعاؤں کے ساتھ' },
   fivePrayers: { en: 'The Five Daily Prayers', ar: 'الصلوات الخمس', ur: 'پانچ وقت کی نمازیں' },
   stepByStep: { en: 'Step-by-Step Prayer Guide', ar: 'دليل الصلاة خطوة بخطوة', ur: 'نماز کا مرحلہ وار طریقہ' },
+  stories: { en: 'Stories', ar: 'القصص', ur: 'واقعات' },
 };
 
 interface I18nContextType {

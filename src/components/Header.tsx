@@ -34,6 +34,7 @@ export const Header = () => {
     { to: '/hadith', label: t('hadith') },
     { to: '/namaz', label: t('namaz') },
     { to: '/tasbeeh', label: t('tasbeeh') },
+    { to: '/stories', label: t('stories') },
   ];
 
   const isActive = (path: string) => location.pathname === path;
