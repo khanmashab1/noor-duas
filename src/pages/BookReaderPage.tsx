@@ -18,6 +18,8 @@ const BookReaderPage = () => {
     lang === 'ar' && b.author_ar ? b.author_ar : lang === 'ur' && b.author_ur ? b.author_ur : b.author;
   const getDesc = (b: any) =>
     lang === 'ar' && b.description_ar ? b.description_ar : lang === 'ur' && b.description_ur ? b.description_ur : b.description;
+  const getContent = (b: any) =>
+    lang === 'ar' && b.content_ar ? b.content_ar : lang === 'ur' && b.content_ur ? b.content_ur : b.content;
 
   if (isLoading) {
     return (
@@ -81,12 +83,12 @@ const BookReaderPage = () => {
 
       {/* Book content */}
       <div className="container px-4 sm:px-6 py-8">
-        {book.content ? (
+        {getContent(book) ? (
           <article
             className={`prose prose-lg dark:prose-invert max-w-none ${isRtl ? 'font-arabic' : ''}`}
             dir={isRtl ? 'rtl' : 'ltr'}
           >
-            {book.content.split('\n').map((paragraph, i) => (
+            {getContent(book).split('\n').map((paragraph: string, i: number) => (
               paragraph.trim() ? (
                 <p key={i} className="mb-4 leading-relaxed text-foreground/90">
                   {paragraph}

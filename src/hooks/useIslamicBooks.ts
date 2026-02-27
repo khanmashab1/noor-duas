@@ -18,6 +18,8 @@ export interface IslamicBook {
   category: string | null;
   sort_order: number | null;
   content: string | null;
+  content_ar: string | null;
+  content_ur: string | null;
 }
 
 export const useIslamicBooks = () =>
