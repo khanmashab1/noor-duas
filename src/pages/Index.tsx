@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useI18n } from '@/lib/i18n';
 import { useCategories, useAllDuas } from '@/hooks/useDuas';
 import { useRandomHadith } from '@/hooks/useHadiths';
+import { loadSettings } from '@/hooks/usePrayerTimes';
 import { useStories } from '@/hooks/useStories';
 import { DuaCard } from '@/components/DuaCard';
 import { HadithCard } from '@/components/HadithCard';
@@ -30,11 +31,21 @@ const HomePage = () => {
   const [hijriDate, setHijriDate] = useState<{ day: string; weekday: string; weekdayAr: string; month: string; monthAr: string; year: string } | null>(null);
 
   useEffect(() => {
-    const today = new Date();
-    const dd = String(today.getDate()).padStart(2, '0');
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const yyyy = today.getFullYear();
-    fetch(`https://api.aladhan.com/v1/timings/${dd}-${mm}-${yyyy}?latitude=33.6844&longitude=73.0479&method=1`)
+    const { latitude, longitude } = loadSettings();
+    const parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Karachi',
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    }).formatToParts(new Date());
+
+    const dd = parts.find((p) => p.type === 'day')?.value ?? '01';
+    const mm = parts.find((p) => p.type === 'month')?.value ?? '01';
+    const yyyy = parts.find((p) => p.type === 'year')?.value ?? String(new Date().getFullYear());
+
+    fetch(
+      `https://api.aladhan.com/v1/timings/${dd}-${mm}-${yyyy}?latitude=${latitude}&longitude=${longitude}&method=1&adjustment=-1`
+    )
       .then(r => r.json())
       .then(d => {
         if (d.code === 200) {
