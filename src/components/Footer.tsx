@@ -1,4 +1,5 @@
 import { useI18n } from '@/lib/i18n';
+import { Linkedin } from 'lucide-react';
 
 export const Footer = () => {
   const { t } = useI18n();
@@ -29,6 +30,17 @@ export const Footer = () => {
               <li>{t('about')}</li>
               <li>{t('contact')}</li>
               <li>{t('privacy')}</li>
+              <li>
+                <a
+                  href="https://www.linkedin.com/in/mashab-jadoon-4b546a320"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 hover:text-primary transition-colors"
+                >
+                  <Linkedin className="h-4 w-4" />
+                  LinkedIn
+                </a>
+              </li>
             </ul>
           </div>
         </div>
