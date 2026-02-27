@@ -5,6 +5,7 @@ import { useIslamicBooks } from '@/hooks/useIslamicBooks';
 import { BookOpen, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const categoryLabels: Record<string, { en: string; ur: string; ar: string }> = {
   hadith: { en: 'Hadith', ur: 'حدیث', ar: 'حديث' },
@@ -19,6 +20,7 @@ const BooksPage = () => {
   const { t, lang } = useI18n();
   const { data: books, isLoading } = useIslamicBooks();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const categories = [...new Set(books?.map(b => b.category || 'general') ?? [])];
   const filtered = selectedCategory
@@ -85,8 +87,8 @@ const BooksPage = () => {
                 transition={{ delay: i * 0.05 }}
               >
                 <Card
-                  className={`h-full border-border/50 hover:shadow-lg hover:border-primary/30 transition-all ${book.external_link ? 'cursor-pointer' : ''}`}
-                  onClick={() => book.external_link && window.open(book.external_link, '_blank', 'noopener,noreferrer')}
+                  className="h-full border-border/50 hover:shadow-lg hover:border-primary/30 transition-all cursor-pointer"
+                  onClick={() => navigate(`/books/${book.id}`)}
                 >
                   <CardContent className="p-5 flex flex-col h-full">
                     <span className="inline-block text-[10px] font-semibold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full mb-3 self-start">
