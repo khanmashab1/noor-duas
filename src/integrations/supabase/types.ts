@@ -212,6 +212,63 @@ export type Database = {
           },
         ]
       }
+      islamic_books: {
+        Row: {
+          author: string | null
+          author_ar: string | null
+          author_ur: string | null
+          category: string | null
+          cover_image_url: string | null
+          created_at: string
+          description: string | null
+          description_ar: string | null
+          description_ur: string | null
+          external_link: string | null
+          id: string
+          pdf_url: string | null
+          sort_order: number | null
+          title: string
+          title_ar: string | null
+          title_ur: string | null
+        }
+        Insert: {
+          author?: string | null
+          author_ar?: string | null
+          author_ur?: string | null
+          category?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          description?: string | null
+          description_ar?: string | null
+          description_ur?: string | null
+          external_link?: string | null
+          id?: string
+          pdf_url?: string | null
+          sort_order?: number | null
+          title: string
+          title_ar?: string | null
+          title_ur?: string | null
+        }
+        Update: {
+          author?: string | null
+          author_ar?: string | null
+          author_ur?: string | null
+          category?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          description?: string | null
+          description_ar?: string | null
+          description_ur?: string | null
+          external_link?: string | null
+          id?: string
+          pdf_url?: string | null
+          sort_order?: number | null
+          title?: string
+          title_ar?: string | null
+          title_ur?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

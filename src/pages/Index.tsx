@@ -4,13 +4,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useI18n } from '@/lib/i18n';
 import { useCategories, useAllDuas } from '@/hooks/useDuas';
+import { useIslamicBooks } from '@/hooks/useIslamicBooks';
 import { useRandomHadith } from '@/hooks/useHadiths';
 import { loadSettings } from '@/hooks/usePrayerTimes';
 import { useStories } from '@/hooks/useStories';
 import { DuaCard } from '@/components/DuaCard';
 import { HadithCard } from '@/components/HadithCard';
 import { NextPrayerCountdown } from '@/components/NextPrayerCountdown';
-import { Sunrise, Sunset, Shield, Plane, Heart, Moon as MoonIcon, Coins, Gem, BookOpen } from 'lucide-react';
+import { Sunrise, Sunset, Shield, Plane, Heart, Moon as MoonIcon, Coins, Gem, BookOpen, Library } from 'lucide-react';
 import { useMemo, useState, useEffect } from 'react';
 
 const categoryIcons: Record<string, React.ReactNode> = {
@@ -61,6 +62,7 @@ const HomePage = () => {
   const { data: allDuas } = useAllDuas();
   const { data: dailyHadith } = useRandomHadith();
   const { data: allStories } = useStories();
+  const { data: islamicBooks } = useIslamicBooks();
 
   const dailyStory = useMemo(() => {
     if (!allStories?.length) return null;
@@ -242,6 +244,44 @@ const HomePage = () => {
           <div className="space-y-4">
             {popularDuas.map((dua) => (
               <DuaCard key={dua.id} dua={dua} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Islamic Books Preview */}
+      {islamicBooks && islamicBooks.length > 0 && (
+        <section className="container px-4 sm:px-6 py-8 sm:py-12">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground flex items-center gap-2">
+              <Library className="h-5 w-5 text-primary" />
+              {lang === 'ar' ? 'الكتب الإسلامية' : lang === 'ur' ? 'اسلامی کتابیں' : 'Islamic Books'}
+            </h2>
+            <Link to="/books">
+              <Button variant="outline" size="sm">{t('viewAll')}</Button>
+            </Link>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {islamicBooks.slice(0, 3).map((book) => (
+              <Card key={book.id} className="border-border/50 hover:shadow-md transition-all">
+                <CardContent className="p-4 sm:p-5">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                      <BookOpen className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h3 className={`font-display text-sm sm:text-base font-bold text-foreground ${lang !== 'en' ? 'font-arabic' : ''}`}>
+                        {lang === 'ar' && book.title_ar ? book.title_ar : lang === 'ur' && book.title_ur ? book.title_ur : book.title}
+                      </h3>
+                      {book.author && (
+                        <p className={`text-xs text-muted-foreground mt-0.5 ${lang !== 'en' ? 'font-arabic' : ''}`}>
+                          ✍️ {lang === 'ar' && book.author_ar ? book.author_ar : lang === 'ur' && book.author_ur ? book.author_ur : book.author}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </section>
