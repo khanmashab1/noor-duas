@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Locate, Clock, Settings2, ChevronDown, CalendarDays, Bell, BellOff, BellRing, Minus, Plus, Download } from 'lucide-react';
+import { MapPin, Locate, Clock, Settings2, ChevronDown, CalendarDays, Bell, BellOff, BellRing, Minus, Plus, Download, Volume2, VolumeX } from 'lucide-react';
 
 function to12Hr(time24: string): string {
   const [h, m] = time24.split(':').map(Number);
@@ -64,7 +64,7 @@ export const PrayerTimes = () => {
     settings, updateSettings, times, loading, error, detectGPS,
     currentPrayer, nextPrayer, nextPrayerTime,
   } = usePrayerTimes();
-  const { notificationsEnabled, toggleNotifications, notifSettings, updatePrayerNotif } = usePrayerNotifications(times);
+  const { notificationsEnabled, toggleNotifications, notifSettings, updatePrayerNotif, adhanEnabled, toggleAdhan } = usePrayerNotifications(times);
 
   const [countdown, setCountdown] = useState('');
   const [showSettings, setShowSettings] = useState(false);
@@ -454,6 +454,30 @@ export const PrayerTimes = () => {
                 <p className="text-xs text-muted-foreground">
                   {lang === 'ur' ? 'ہر نماز کے لیے الرٹ اور یاددہانی کا وقت منتخب کریں' : 'Toggle alerts and set reminder time for each prayer'}
                 </p>
+
+                {/* Adhan Toggle */}
+                <div className="flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-lg">🔊</span>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">
+                        {lang === 'ur' ? 'اذان کی آواز' : lang === 'ar' ? 'صوت الأذان' : 'Adhan Sound'}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {lang === 'ur' ? 'نماز کے وقت اذان بجائیں' : 'Play adhan audio at prayer time'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => { const a = new Audio('/audio/adhan.mp3'); a.volume = 0.5; a.play().catch(() => {}); setTimeout(() => { a.pause(); a.currentTime = 0; }, 8000); }}>
+                      {adhanEnabled ? <Volume2 className="h-4 w-4 text-primary" /> : <VolumeX className="h-4 w-4 text-muted-foreground" />}
+                    </Button>
+                    <Switch
+                      checked={adhanEnabled}
+                      onCheckedChange={toggleAdhan}
+                    />
+                  </div>
+                </div>
                 <div className="space-y-2">
                   {PRAYER_KEYS.filter(k => k !== 'Sunrise').map(key => {
                     const info = PRAYER_INFO[key];
