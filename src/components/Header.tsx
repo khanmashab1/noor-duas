@@ -35,6 +35,7 @@ export const Header = () => {
     { to: '/namaz', label: t('namaz') },
     { to: '/tasbeeh', label: t('tasbeeh') },
     { to: '/stories', label: t('stories') },
+    { to: '/books', label: lang === 'ar' ? 'كتب' : lang === 'ur' ? 'کتابیں' : 'Books' },
   ];
 
   const isActive = (path: string) => location.pathname === path;
