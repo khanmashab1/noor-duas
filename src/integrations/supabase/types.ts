@@ -148,6 +148,9 @@ export type Database = {
           id: string
           reference: string | null
           sort_order: number | null
+          title: string | null
+          title_ar: string | null
+          title_ur: string | null
           updated_at: string
           urdu_translation: string | null
           word_by_word: Json | null
@@ -163,6 +166,9 @@ export type Database = {
           id?: string
           reference?: string | null
           sort_order?: number | null
+          title?: string | null
+          title_ar?: string | null
+          title_ur?: string | null
           updated_at?: string
           urdu_translation?: string | null
           word_by_word?: Json | null
@@ -178,6 +184,9 @@ export type Database = {
           id?: string
           reference?: string | null
           sort_order?: number | null
+          title?: string | null
+          title_ar?: string | null
+          title_ur?: string | null
           updated_at?: string
           urdu_translation?: string | null
           word_by_word?: Json | null

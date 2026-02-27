@@ -13,12 +13,19 @@ import { AudioPlayer } from '@/components/AudioPlayer';
 import { ShareImage } from '@/components/ShareImage';
 
 interface DuaCardProps {
-  dua: Dua;
+  dua: Dua & { title?: string | null; title_ar?: string | null; title_ur?: string | null };
   showExpand?: boolean;
 }
 
 export const DuaCard = ({ dua, showExpand = true }: DuaCardProps) => {
   const { t, lang } = useI18n();
+
+  const getDuaTitle = () => {
+    if (lang === 'ar' && (dua as any).title_ar) return (dua as any).title_ar;
+    if (lang === 'ur' && (dua as any).title_ur) return (dua as any).title_ur;
+    return (dua as any).title || '';
+  };
+  const duaTitle = getDuaTitle();
   const { user } = useAuth();
   const { isFavorite, addFavorite, removeFavorite } = useFavorites();
   const [expanded, setExpanded] = useState(false);
@@ -57,6 +64,11 @@ export const DuaCard = ({ dua, showExpand = true }: DuaCardProps) => {
     >
       <Card className="overflow-hidden border-border/50 shadow-md hover:shadow-lg transition-shadow">
         <CardContent className="p-4 sm:p-6">
+          {/* Title */}
+          {duaTitle && (
+            <h3 className="mb-3 font-display text-base sm:text-lg font-semibold text-foreground">{duaTitle}</h3>
+          )}
+
           {/* Arabic Text */}
           <div className="mb-4 rounded-lg bg-primary/5 p-3 sm:p-5" dir="rtl">
             <p className="font-arabic text-xl sm:text-2xl leading-loose text-foreground">{dua.arabic_text}</p>
