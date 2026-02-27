@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Locate, Clock, Settings2, ChevronDown, CalendarDays, Bell, Minus, Plus, Download } from 'lucide-react';
+import { MapPin, Locate, Clock, Settings2, ChevronDown, CalendarDays, Bell, BellOff, BellRing, Minus, Plus, Download } from 'lucide-react';
 
 function to12Hr(time24: string): string {
   const [h, m] = time24.split(':').map(Number);
@@ -16,6 +16,7 @@ import {
   usePrayerTimes, fetchMonthlyTimes,
   PRAYER_KEYS, PRAYER_INFO, PAKISTAN_CITIES, PrayerKey,
 } from '@/hooks/usePrayerTimes';
+import { usePrayerNotifications } from '@/hooks/usePrayerNotifications';
 
 const PrayerTimeCard = ({
   prayerKey, time, isCurrent, isNext, lang, countdown,
@@ -62,6 +63,7 @@ export const PrayerTimes = () => {
     settings, updateSettings, times, loading, error, detectGPS,
     currentPrayer, nextPrayer, nextPrayerTime,
   } = usePrayerTimes();
+  const { notificationsEnabled, toggleNotifications } = usePrayerNotifications(times);
 
   const [countdown, setCountdown] = useState('');
   const [showSettings, setShowSettings] = useState(false);
@@ -98,12 +100,7 @@ export const PrayerTimes = () => {
     return () => clearInterval(iv);
   }, [nextPrayerTime]);
 
-  // Notification permission
-  const requestNotification = () => {
-    if ('Notification' in window) {
-      Notification.requestPermission();
-    }
-  };
+  // Notification is now handled by usePrayerNotifications hook
 
   // Load monthly timetable
   const loadMonthly = async () => {
@@ -310,9 +307,10 @@ export const PrayerTimes = () => {
             <CalendarDays className="h-4 w-4" />
             <span className="hidden sm:inline">{labels.monthly[lang]}</span>
           </Button>
-          {'Notification' in window && Notification.permission !== 'granted' && (
-            <Button size="sm" variant="outline" onClick={requestNotification} className="gap-1.5">
-              <Bell className="h-4 w-4" />
+          {'Notification' in window && (
+            <Button size="sm" variant={notificationsEnabled ? 'default' : 'outline'} onClick={toggleNotifications} className="gap-1.5">
+              {notificationsEnabled ? <BellRing className="h-4 w-4" /> : <Bell className="h-4 w-4" />}
+              <span className="hidden sm:inline">{notificationsEnabled ? (lang === 'ur' ? 'آن' : 'On') : (lang === 'ur' ? 'نوٹیفکیشن' : 'Notify')}</span>
             </Button>
           )}
         </div>
