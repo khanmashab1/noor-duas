@@ -16,7 +16,8 @@ import {
   usePrayerTimes, fetchMonthlyTimes,
   PRAYER_KEYS, PRAYER_INFO, PAKISTAN_CITIES, PrayerKey,
 } from '@/hooks/usePrayerTimes';
-import { usePrayerNotifications } from '@/hooks/usePrayerNotifications';
+import { usePrayerNotifications, REMINDER_OPTIONS, ReminderMinutes } from '@/hooks/usePrayerNotifications';
+import { Switch } from '@/components/ui/switch';
 
 const PrayerTimeCard = ({
   prayerKey, time, isCurrent, isNext, lang, countdown,
@@ -63,10 +64,11 @@ export const PrayerTimes = () => {
     settings, updateSettings, times, loading, error, detectGPS,
     currentPrayer, nextPrayer, nextPrayerTime,
   } = usePrayerTimes();
-  const { notificationsEnabled, toggleNotifications } = usePrayerNotifications(times);
+  const { notificationsEnabled, toggleNotifications, notifSettings, updatePrayerNotif } = usePrayerNotifications(times);
 
   const [countdown, setCountdown] = useState('');
   const [showSettings, setShowSettings] = useState(false);
+  const [showNotifSettings, setShowNotifSettings] = useState(false);
   const [showMonthly, setShowMonthly] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
   const monthlyRef = useRef<HTMLDivElement>(null);
@@ -307,11 +309,18 @@ export const PrayerTimes = () => {
             <CalendarDays className="h-4 w-4" />
             <span className="hidden sm:inline">{labels.monthly[lang]}</span>
           </Button>
-          {'Notification' in window && (
-            <Button size="sm" variant={notificationsEnabled ? 'default' : 'outline'} onClick={toggleNotifications} className="gap-1.5">
-              {notificationsEnabled ? <BellRing className="h-4 w-4" /> : <Bell className="h-4 w-4" />}
-              <span className="hidden sm:inline">{notificationsEnabled ? (lang === 'ur' ? 'آن' : 'On') : (lang === 'ur' ? 'نوٹیفکیشن' : 'Notify')}</span>
-            </Button>
+        {'Notification' in window && (
+            <>
+              <Button size="sm" variant={notificationsEnabled ? 'default' : 'outline'} onClick={notificationsEnabled ? () => setShowNotifSettings(!showNotifSettings) : toggleNotifications} className="gap-1.5">
+                {notificationsEnabled ? <BellRing className="h-4 w-4" /> : <Bell className="h-4 w-4" />}
+                <span className="hidden sm:inline">{notificationsEnabled ? (lang === 'ur' ? 'ترتیبات' : 'Alerts') : (lang === 'ur' ? 'نوٹیفکیشن' : 'Notify')}</span>
+              </Button>
+              {notificationsEnabled && (
+                <Button size="sm" variant="ghost" onClick={toggleNotifications} className="gap-1 text-destructive hover:text-destructive">
+                  <BellOff className="h-4 w-4" />
+                </Button>
+              )}
+            </>
           )}
         </div>
       </div>
@@ -420,6 +429,69 @@ export const PrayerTimes = () => {
                       </div>
                     ))}
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Notification Settings Panel */}
+      <AnimatePresence>
+        {showNotifSettings && notificationsEnabled && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden mb-6"
+          >
+            <Card className="border-border/50">
+              <CardContent className="p-5 space-y-4">
+                <h3 className="font-display font-bold text-foreground flex items-center gap-2">
+                  <BellRing className="h-4 w-4 text-primary" />
+                  {lang === 'ur' ? 'نوٹیفکیشن کی ترتیبات' : lang === 'ar' ? 'إعدادات الإشعارات' : 'Notification Settings'}
+                </h3>
+                <p className="text-xs text-muted-foreground">
+                  {lang === 'ur' ? 'ہر نماز کے لیے الرٹ اور یاددہانی کا وقت منتخب کریں' : 'Toggle alerts and set reminder time for each prayer'}
+                </p>
+                <div className="space-y-2">
+                  {PRAYER_KEYS.filter(k => k !== 'Sunrise').map(key => {
+                    const info = PRAYER_INFO[key];
+                    const ps = notifSettings[key];
+                    return (
+                      <div key={key} className="flex items-center justify-between rounded-lg border border-border/50 px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          <span className="text-lg">{info.icon}</span>
+                          <div>
+                            <p className="text-sm font-medium text-foreground">{info.en}</p>
+                            <p className="text-xs text-muted-foreground font-urdu">{info.ur}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <Select
+                            value={String(ps?.reminderMinutes ?? 5)}
+                            onValueChange={(v) => updatePrayerNotif(key, { reminderMinutes: Number(v) as ReminderMinutes })}
+                            disabled={!ps?.enabled}
+                          >
+                            <SelectTrigger className="w-[130px] h-8 text-xs">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {REMINDER_OPTIONS.map(opt => (
+                                <SelectItem key={opt.value} value={String(opt.value)}>
+                                  {lang === 'ur' ? opt.label.ur : opt.label.en}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <Switch
+                            checked={ps?.enabled ?? true}
+                            onCheckedChange={(checked) => updatePrayerNotif(key, { enabled: checked })}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </CardContent>
             </Card>
