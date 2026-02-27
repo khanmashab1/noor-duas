@@ -17,6 +17,7 @@ export interface IslamicBook {
   external_link: string | null;
   category: string | null;
   sort_order: number | null;
+  content: string | null;
 }
 
 export const useIslamicBooks = () =>

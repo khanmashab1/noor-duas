@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useIslamicBooks } from '@/hooks/useIslamicBooks';
 import { useI18n } from '@/lib/i18n';
-import { ArrowLeft, ExternalLink } from 'lucide-react';
+import { ArrowLeft, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const BookReaderPage = () => {
@@ -14,6 +14,10 @@ const BookReaderPage = () => {
 
   const getTitle = (b: any) =>
     lang === 'ar' && b.title_ar ? b.title_ar : lang === 'ur' && b.title_ur ? b.title_ur : b.title;
+  const getAuthor = (b: any) =>
+    lang === 'ar' && b.author_ar ? b.author_ar : lang === 'ur' && b.author_ur ? b.author_ur : b.author;
+  const getDesc = (b: any) =>
+    lang === 'ar' && b.description_ar ? b.description_ar : lang === 'ur' && b.description_ur ? b.description_ur : b.description;
 
   if (isLoading) {
     return (
@@ -35,53 +39,74 @@ const BookReaderPage = () => {
     );
   }
 
-  return (
-    <div className="min-h-screen flex flex-col">
-      {/* Top bar */}
-      <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
-        <div className="container flex items-center gap-3 px-4 py-2.5">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/books')} className="shrink-0">
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h1 className={`text-sm sm:text-base font-semibold truncate ${lang !== 'en' ? 'font-arabic' : ''}`}>
-            {getTitle(book)}
-          </h1>
-          {book.external_link && (
-            <a
-              href={book.external_link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="ml-auto shrink-0"
-            >
-              <Button variant="outline" size="sm" className="gap-1.5 text-xs">
-                <ExternalLink className="h-3.5 w-3.5" />
-                {lang === 'ur' ? 'نئی ٹیب' : lang === 'ar' ? 'تبويب جديد' : 'New Tab'}
-              </Button>
-            </a>
-          )}
-        </div>
-      </div>
+  const isRtl = lang !== 'en';
 
-      {/* Content */}
-      {book.external_link ? (
-        <iframe
-          src={book.external_link}
-          className="flex-1 w-full border-0"
-          title={book.title}
-          sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-          style={{ minHeight: 'calc(100vh - 120px)' }}
-        />
-      ) : (
-        <div className="container px-4 py-10 text-center">
-          <p className={`text-muted-foreground ${lang !== 'en' ? 'font-arabic' : ''}`}>
-            {lang === 'ur'
-              ? 'اس کتاب کا آن لائن لنک دستیاب نہیں ہے۔'
-              : lang === 'ar'
-              ? 'رابط هذا الكتاب غير متوفر حالياً.'
-              : 'Online reading is not available for this book yet.'}
-          </p>
+  return (
+    <div className="min-h-screen">
+      {/* Hero header */}
+      <section className="relative overflow-hidden bg-primary py-8 sm:py-12 text-primary-foreground islamic-pattern">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/90 to-primary" />
+        <div className="container relative z-10 px-4 sm:px-6">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/books')}
+            className="mb-4 text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10"
+          >
+            <ArrowLeft className="h-4 w-4 mr-1.5" />
+            {lang === 'ur' ? 'واپس' : lang === 'ar' ? 'العودة' : 'Back'}
+          </Button>
+          <div className="flex items-start gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary-foreground/10">
+              <BookOpen className="h-6 w-6" />
+            </div>
+            <div>
+              <h1 className={`font-display text-xl sm:text-2xl md:text-3xl font-bold ${isRtl ? 'font-arabic' : ''}`}>
+                {getTitle(book)}
+              </h1>
+              {getAuthor(book) && (
+                <p className={`mt-1 text-sm opacity-80 ${isRtl ? 'font-arabic' : ''}`}>
+                  ✍️ {getAuthor(book)}
+                </p>
+              )}
+              {getDesc(book) && (
+                <p className={`mt-2 text-sm opacity-70 max-w-2xl ${isRtl ? 'font-arabic' : ''}`} dir={isRtl ? 'rtl' : 'ltr'}>
+                  {getDesc(book)}
+                </p>
+              )}
+            </div>
+          </div>
         </div>
-      )}
+      </section>
+
+      {/* Book content */}
+      <div className="container px-4 sm:px-6 py-8">
+        {book.content ? (
+          <article
+            className={`prose prose-lg dark:prose-invert max-w-none ${isRtl ? 'font-arabic' : ''}`}
+            dir={isRtl ? 'rtl' : 'ltr'}
+          >
+            {book.content.split('\n').map((paragraph, i) => (
+              paragraph.trim() ? (
+                <p key={i} className="mb-4 leading-relaxed text-foreground/90">
+                  {paragraph}
+                </p>
+              ) : <br key={i} />
+            ))}
+          </article>
+        ) : (
+          <div className="text-center py-16">
+            <BookOpen className="mx-auto h-12 w-12 text-muted-foreground/40 mb-4" />
+            <p className={`text-muted-foreground ${isRtl ? 'font-arabic' : ''}`}>
+              {lang === 'ur'
+                ? 'اس کتاب کا مواد ابھی دستیاب نہیں ہے۔ جلد اپ لوڈ کیا جائے گا۔'
+                : lang === 'ar'
+                ? 'محتوى هذا الكتاب غير متوفر حالياً. سيتم رفعه قريباً.'
+                : 'Content for this book is not available yet. It will be uploaded soon.'}
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
