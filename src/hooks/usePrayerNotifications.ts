@@ -2,7 +2,37 @@ import { useEffect, useCallback, useState } from 'react';
 import { PrayerTimesData, PRAYER_INFO, PrayerKey, PRAYER_KEYS } from './usePrayerTimes';
 
 const NOTIF_STORAGE_KEY = 'noor-prayer-notifications';
+const NOTIF_SETTINGS_KEY = 'noor-prayer-notif-settings';
 const NOTIFIED_KEY = 'noor-notified-today';
+
+export type ReminderMinutes = 0 | 5 | 10 | 15 | 20 | 30;
+export const REMINDER_OPTIONS: { value: ReminderMinutes; label: { en: string; ur: string } }[] = [
+  { value: 0, label: { en: 'At prayer time', ur: 'نماز کے وقت' } },
+  { value: 5, label: { en: '5 min before', ur: '5 منٹ پہلے' } },
+  { value: 10, label: { en: '10 min before', ur: '10 منٹ پہلے' } },
+  { value: 15, label: { en: '15 min before', ur: '15 منٹ پہلے' } },
+  { value: 20, label: { en: '20 min before', ur: '20 منٹ پہلے' } },
+  { value: 30, label: { en: '30 min before', ur: '30 منٹ پہلے' } },
+];
+
+export interface NotifPrayerSettings {
+  enabled: boolean;
+  reminderMinutes: ReminderMinutes;
+}
+
+export type NotifSettings = Record<string, NotifPrayerSettings>;
+
+const DEFAULT_SETTINGS: NotifSettings = Object.fromEntries(
+  PRAYER_KEYS.filter(k => k !== 'Sunrise').map(k => [k, { enabled: true, reminderMinutes: 5 as ReminderMinutes }])
+);
+
+function loadSettings(): NotifSettings {
+  try {
+    const stored = localStorage.getItem(NOTIF_SETTINGS_KEY);
+    if (stored) return { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
+  } catch {}
+  return DEFAULT_SETTINGS;
+}
 
 export function usePrayerNotifications(times: PrayerTimesData | null) {
   const [enabled, setEnabled] = useState(() => {
@@ -10,6 +40,8 @@ export function usePrayerNotifications(times: PrayerTimesData | null) {
       return localStorage.getItem(NOTIF_STORAGE_KEY) === 'true';
     } catch { return false; }
   });
+
+  const [notifSettings, setNotifSettings] = useState<NotifSettings>(loadSettings);
 
   const toggleNotifications = useCallback(async () => {
     if (!enabled) {
@@ -24,6 +56,14 @@ export function usePrayerNotifications(times: PrayerTimesData | null) {
       localStorage.setItem(NOTIF_STORAGE_KEY, 'false');
     }
   }, [enabled]);
+
+  const updatePrayerNotif = useCallback((prayer: string, updates: Partial<NotifPrayerSettings>) => {
+    setNotifSettings(prev => {
+      const next = { ...prev, [prayer]: { ...prev[prayer], ...updates } };
+      localStorage.setItem(NOTIF_SETTINGS_KEY, JSON.stringify(next));
+      return next;
+    });
+  }, []);
 
   useEffect(() => {
     if (!enabled || !times || !('Notification' in window) || Notification.permission !== 'granted') return;
@@ -52,41 +92,47 @@ export function usePrayerNotifications(times: PrayerTimesData | null) {
       const prayerOnly = PRAYER_KEYS.filter(k => k !== 'Sunrise');
 
       for (const key of prayerOnly) {
-        if (notified.has(key)) continue;
+        const prayerSettings = notifSettings[key];
+        if (!prayerSettings?.enabled) continue;
+
         const [h, m] = times[key].split(':').map(Number);
         const prayerMinutes = h * 60 + m;
+        const info = PRAYER_INFO[key];
 
-        // Notify if within 1 minute window of prayer time
-        if (nowMinutes >= prayerMinutes && nowMinutes <= prayerMinutes + 1) {
-          const info = PRAYER_INFO[key];
+        // Notify at prayer time
+        const atTimeKey = `${key}-at`;
+        if (!notified.has(atTimeKey) && nowMinutes >= prayerMinutes && nowMinutes <= prayerMinutes + 1) {
           new Notification(`🕌 ${info.en} - ${info.ur}`, {
             body: `It's time for ${info.en} prayer (${info.ur} کا وقت ہو گیا ہے)`,
             icon: '/favicon.png',
             tag: `prayer-${key}`,
           });
-          notified.add(key);
+          notified.add(atTimeKey);
           saveNotified(notified);
         }
 
-        // Also notify 5 minutes before
-        const preKey = `${key}-pre`;
-        if (!notified.has(preKey) && nowMinutes === prayerMinutes - 5) {
-          const info = PRAYER_INFO[key];
-          new Notification(`⏰ ${info.en} in 5 minutes`, {
-            body: `${info.ur} کی نماز میں 5 منٹ باقی ہیں`,
-            icon: '/favicon.png',
-            tag: `prayer-pre-${key}`,
-          });
-          notified.add(preKey);
-          saveNotified(notified);
+        // Notify at custom reminder time
+        const reminder = prayerSettings.reminderMinutes;
+        if (reminder > 0) {
+          const preKey = `${key}-pre-${reminder}`;
+          const reminderTime = prayerMinutes - reminder;
+          if (!notified.has(preKey) && nowMinutes >= reminderTime && nowMinutes <= reminderTime + 1) {
+            new Notification(`⏰ ${info.en} in ${reminder} minutes`, {
+              body: `${info.ur} کی نماز میں ${reminder} منٹ باقی ہیں`,
+              icon: '/favicon.png',
+              tag: `prayer-pre-${key}`,
+            });
+            notified.add(preKey);
+            saveNotified(notified);
+          }
         }
       }
     };
 
     checkAndNotify();
-    const interval = setInterval(checkAndNotify, 30000); // check every 30s
+    const interval = setInterval(checkAndNotify, 30000);
     return () => clearInterval(interval);
-  }, [enabled, times]);
+  }, [enabled, times, notifSettings]);
 
-  return { notificationsEnabled: enabled, toggleNotifications };
+  return { notificationsEnabled: enabled, toggleNotifications, notifSettings, updatePrayerNotif };
 }
