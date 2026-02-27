@@ -84,7 +84,10 @@ const BooksPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
               >
-                <Card className="h-full border-border/50 hover:shadow-lg hover:border-primary/30 transition-all">
+                <Card
+                  className={`h-full border-border/50 hover:shadow-lg hover:border-primary/30 transition-all ${book.external_link ? 'cursor-pointer' : ''}`}
+                  onClick={() => book.external_link && window.open(book.external_link, '_blank', 'noopener,noreferrer')}
+                >
                   <CardContent className="p-5 flex flex-col h-full">
                     <span className="inline-block text-[10px] font-semibold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full mb-3 self-start">
                       {getCatLabel(book.category || 'general')}
@@ -108,12 +111,12 @@ const BooksPage = () => {
                       {getDesc(book)}
                     </p>
                     {book.external_link && (
-                      <a href={book.external_link} target="_blank" rel="noopener noreferrer" className="mt-3">
+                      <div className="mt-3">
                         <Button variant="outline" size="sm" className="gap-1.5 w-full">
                           <ExternalLink className="h-3.5 w-3.5" />
                           {lang === 'ur' ? 'پڑھیں' : lang === 'ar' ? 'اقرأ' : 'Read Online'}
                         </Button>
-                      </a>
+                      </div>
                     )}
                   </CardContent>
                 </Card>
