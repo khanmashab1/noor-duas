@@ -14,6 +14,98 @@ export type Database = {
   }
   public: {
     Tables: {
+      book_bookmarks: {
+        Row: {
+          book_id: string
+          chapter_id: string | null
+          created_at: string
+          id: string
+          note: string | null
+          saved_text: string
+          user_id: string
+        }
+        Insert: {
+          book_id: string
+          chapter_id?: string | null
+          created_at?: string
+          id?: string
+          note?: string | null
+          saved_text: string
+          user_id: string
+        }
+        Update: {
+          book_id?: string
+          chapter_id?: string | null
+          created_at?: string
+          id?: string
+          note?: string | null
+          saved_text?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "book_bookmarks_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "islamic_books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "book_bookmarks_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "book_chapters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      book_chapters: {
+        Row: {
+          book_id: string
+          chapter_number: number
+          chapter_title: string
+          chapter_title_ar: string | null
+          chapter_title_ur: string | null
+          content: string
+          content_ar: string | null
+          content_ur: string | null
+          created_at: string
+          id: string
+        }
+        Insert: {
+          book_id: string
+          chapter_number?: number
+          chapter_title: string
+          chapter_title_ar?: string | null
+          chapter_title_ur?: string | null
+          content?: string
+          content_ar?: string | null
+          content_ur?: string | null
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          book_id?: string
+          chapter_number?: number
+          chapter_title?: string
+          chapter_title_ar?: string | null
+          chapter_title_ur?: string | null
+          content?: string
+          content_ar?: string | null
+          content_ur?: string | null
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "book_chapters_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "islamic_books"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       categories: {
         Row: {
           created_at: string
@@ -304,6 +396,48 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      reading_progress: {
+        Row: {
+          book_id: string
+          chapter_id: string | null
+          id: string
+          last_read_position: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          book_id: string
+          chapter_id?: string | null
+          id?: string
+          last_read_position?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          book_id?: string
+          chapter_id?: string | null
+          id?: string
+          last_read_position?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reading_progress_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "islamic_books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reading_progress_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "book_chapters"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       stories: {
         Row: {
