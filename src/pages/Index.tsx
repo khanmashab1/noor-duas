@@ -44,13 +44,15 @@ const HomePage = () => {
     const yyyy = parts.find((p) => p.type === 'year')?.value ?? String(new Date().getFullYear());
 
     fetch(
-      `https://api.aladhan.com/v1/timings/${dd}-${mm}-${yyyy}?latitude=${latitude}&longitude=${longitude}&method=1&adjustment=-1`
+      `https://api.aladhan.com/v1/timings/${dd}-${mm}-${yyyy}?latitude=${latitude}&longitude=${longitude}&method=1`
     )
       .then(r => r.json())
       .then(d => {
         if (d.code === 200) {
           const h = d.data.date.hijri;
-          setHijriDate({ day: h.day, weekday: h.weekday.en, weekdayAr: h.weekday.ar, month: h.month.en, monthAr: h.month.ar, year: h.year });
+          // Pakistan moon sighting is typically 1 day behind the calculated Hijri date
+          const adjustedDay = String(Math.max(1, parseInt(h.day) - 1));
+          setHijriDate({ day: adjustedDay, weekday: h.weekday.en, weekdayAr: h.weekday.ar, month: h.month.en, monthAr: h.month.ar, year: h.year });
         }
       })
       .catch(() => {});
