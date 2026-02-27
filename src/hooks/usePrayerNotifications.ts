@@ -34,11 +34,27 @@ function loadSettings(): NotifSettings {
   return DEFAULT_SETTINGS;
 }
 
+const ADHAN_STORAGE_KEY = 'noor-adhan-enabled';
+
+function playAdhan() {
+  try {
+    const audio = new Audio('/audio/adhan.mp3');
+    audio.volume = 0.7;
+    audio.play().catch(() => {});
+  } catch {}
+}
+
 export function usePrayerNotifications(times: PrayerTimesData | null) {
   const [enabled, setEnabled] = useState(() => {
     try {
       return localStorage.getItem(NOTIF_STORAGE_KEY) === 'true';
     } catch { return false; }
+  });
+
+  const [adhanEnabled, setAdhanEnabled] = useState(() => {
+    try {
+      return localStorage.getItem(ADHAN_STORAGE_KEY) !== 'false'; // default true
+    } catch { return true; }
   });
 
   const [notifSettings, setNotifSettings] = useState<NotifSettings>(loadSettings);
@@ -56,6 +72,14 @@ export function usePrayerNotifications(times: PrayerTimesData | null) {
       localStorage.setItem(NOTIF_STORAGE_KEY, 'false');
     }
   }, [enabled]);
+
+  const toggleAdhan = useCallback(() => {
+    setAdhanEnabled(prev => {
+      const next = !prev;
+      localStorage.setItem(ADHAN_STORAGE_KEY, String(next));
+      return next;
+    });
+  }, []);
 
   const updatePrayerNotif = useCallback((prayer: string, updates: Partial<NotifPrayerSettings>) => {
     setNotifSettings(prev => {
@@ -107,6 +131,7 @@ export function usePrayerNotifications(times: PrayerTimesData | null) {
             icon: '/favicon.png',
             tag: `prayer-${key}`,
           });
+          if (adhanEnabled) playAdhan();
           notified.add(atTimeKey);
           saveNotified(notified);
         }
@@ -132,7 +157,7 @@ export function usePrayerNotifications(times: PrayerTimesData | null) {
     checkAndNotify();
     const interval = setInterval(checkAndNotify, 30000);
     return () => clearInterval(interval);
-  }, [enabled, times, notifSettings]);
+  }, [enabled, times, notifSettings, adhanEnabled]);
 
-  return { notificationsEnabled: enabled, toggleNotifications, notifSettings, updatePrayerNotif };
+  return { notificationsEnabled: enabled, toggleNotifications, notifSettings, updatePrayerNotif, adhanEnabled, toggleAdhan };
 }
