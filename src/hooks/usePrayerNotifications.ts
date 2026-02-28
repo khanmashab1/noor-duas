@@ -119,19 +119,24 @@ export function usePrayerNotifications(times: PrayerTimesData | null) {
         const prayerSettings = notifSettings[key];
         if (!prayerSettings?.enabled) continue;
 
-        const [h, m] = times[key].split(':').map(Number);
+        const timeStr = (times[key] || '').split(' ')[0];
+        if (!timeStr || !timeStr.includes(':')) continue;
+        const [h, m] = timeStr.split(':').map(Number);
+        if (isNaN(h) || isNaN(m)) continue;
         const prayerMinutes = h * 60 + m;
         const info = PRAYER_INFO[key];
 
         // Notify at prayer time
         const atTimeKey = `${key}-at`;
         if (!notified.has(atTimeKey) && nowMinutes >= prayerMinutes && nowMinutes <= prayerMinutes + 1) {
-          new Notification(`🕌 ${info.en} - ${info.ur}`, {
-            body: `It's time for ${info.en} prayer (${info.ur} کا وقت ہو گیا ہے)`,
-            icon: '/favicon.png',
-            tag: `prayer-${key}`,
-          });
-          if (adhanEnabled) playAdhan();
+          try {
+            new Notification(`🕌 ${info.en} - ${info.ur}`, {
+              body: `It's time for ${info.en} prayer (${info.ur} کا وقت ہو گیا ہے)`,
+              icon: '/favicon.png',
+              tag: `prayer-${key}`,
+            });
+            if (adhanEnabled) playAdhan();
+          } catch {}
           notified.add(atTimeKey);
           saveNotified(notified);
         }
@@ -142,11 +147,13 @@ export function usePrayerNotifications(times: PrayerTimesData | null) {
           const preKey = `${key}-pre-${reminder}`;
           const reminderTime = prayerMinutes - reminder;
           if (!notified.has(preKey) && nowMinutes >= reminderTime && nowMinutes <= reminderTime + 1) {
-            new Notification(`⏰ ${info.en} in ${reminder} minutes`, {
-              body: `${info.ur} کی نماز میں ${reminder} منٹ باقی ہیں`,
-              icon: '/favicon.png',
-              tag: `prayer-pre-${key}`,
-            });
+            try {
+              new Notification(`⏰ ${info.en} in ${reminder} minutes`, {
+                body: `${info.ur} کی نماز میں ${reminder} منٹ باقی ہیں`,
+                icon: '/favicon.png',
+                tag: `prayer-pre-${key}`,
+              });
+            } catch {}
             notified.add(preKey);
             saveNotified(notified);
           }
