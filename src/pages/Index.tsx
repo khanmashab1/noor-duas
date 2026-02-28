@@ -89,15 +89,10 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen">
-      <SEO path="/" />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Noor Duas",
-        "url": "https://noor-duas.vercel.app",
-        "description": "Authentic Duas & Hadiths from the Quran and Sahih Hadith with Arabic, Urdu & English translations",
-        "potentialAction": { "@type": "SearchAction", "target": "https://noor-duas.vercel.app/categories?q={search_term_string}", "query-input": "required name=search_term_string" }
-      })}} />
+      <SEO
+        path="/"
+        keywords="islamic duas, morning dua, dua for anxiety, namaz guide, tasbeeh counter, sahih bukhari, quran duas, ramadan duas"
+      />
       {/* Next Prayer Countdown */}
       <NextPrayerCountdown />
 

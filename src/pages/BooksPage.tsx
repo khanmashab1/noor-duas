@@ -58,7 +58,7 @@ const BooksPage = () => {
 
   return (
     <div className="min-h-screen">
-      <SEO title="Islamic Books" description="Read authentic Islamic books – Hadith, Fiqh, Tafsir, Seerah & more in Arabic, Urdu & English" path="/books" />
+      <SEO title="Islamic Books – Hadith, Fiqh, Tafsir & Seerah" description="Read authentic Islamic books online – Hadith collections, Fiqh, Tafsir, Seerah & more in Arabic, Urdu & English" path="/books" breadcrumbs={[{ name: 'Books', path: '/books' }]} keywords="islamic books, hadith book, fiqh book, tafsir, seerah, islamic library" />
       {/* Hero */}
       <section className="relative overflow-hidden bg-primary py-10 sm:py-16 text-primary-foreground islamic-pattern">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/90 to-primary" />

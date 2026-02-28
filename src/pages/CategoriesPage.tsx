@@ -36,7 +36,7 @@ const CategoriesPage = () => {
   if (id && duas) {
     return (
       <div className="container px-4 sm:px-6 py-6 sm:py-8">
-        <SEO title={currentCategory ? getCategoryName(currentCategory) : 'Category'} description={`Authentic duas for ${currentCategory?.name || 'this category'} from Quran & Sunnah`} path={`/categories/${id}`} />
+        <SEO title={currentCategory ? getCategoryName(currentCategory) : 'Category'} description={`Authentic duas for ${currentCategory?.name || 'this category'} from Quran & Sunnah with Arabic, Urdu & English`} path={`/categories/${id}`} breadcrumbs={[{ name: 'Categories', path: '/categories' }, { name: currentCategory ? getCategoryName(currentCategory) : 'Category', path: `/categories/${id}` }]} article={{ datePublished: '2025-01-01' }} keywords={`${currentCategory?.name || ''} dua, islamic dua, quran dua`} />
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <Link to="/categories" className="mb-4 inline-block text-sm text-primary hover:underline">
             ← {t('categories')}
@@ -57,7 +57,7 @@ const CategoriesPage = () => {
 
   return (
     <div className="container px-4 sm:px-6 py-6 sm:py-8">
-      <SEO title="Dua Categories" description="Browse authentic dua categories from Quran & Sunnah – morning, evening, protection, travel & more" path="/categories" />
+      <SEO title="Dua Categories – Morning, Evening, Protection & More" description="Browse authentic dua categories from Quran & Sunnah – morning duas, evening duas, protection, travel, Ramadan & more in Arabic, Urdu & English" path="/categories" breadcrumbs={[{ name: 'Categories', path: '/categories' }]} keywords="dua categories, morning dua, evening dua, protection dua, travel dua, ramadan duas" />
       <h1 className="mb-6 sm:mb-8 font-display text-2xl sm:text-3xl font-bold text-foreground">{t('categories')}</h1>
       <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {categories?.map((cat, i) => (

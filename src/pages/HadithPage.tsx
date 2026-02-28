@@ -39,7 +39,7 @@ const HadithPage = () => {
 
   return (
     <div className="min-h-screen">
-      <SEO title="Hadith Collection" description="Browse authentic Hadiths from Sahih Bukhari, Sahih Muslim & more with Arabic, Urdu & English translations" path="/hadith" />
+      <SEO title="Authentic Hadith Collection – Sahih Bukhari & Muslim" description="Browse authentic Hadiths from Sahih Bukhari, Sahih Muslim & Hisnul Muslim with Arabic, Urdu & English translations" path="/hadith" breadcrumbs={[{ name: 'Hadith', path: '/hadith' }]} article={{ datePublished: '2025-01-01' }} keywords="sahih bukhari hadith, sahih muslim, authentic hadith collection, hadith in urdu, hadith in english" />
       {/* Hero */}
       <section className="bg-primary py-10 sm:py-14 text-primary-foreground islamic-pattern relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/90 to-primary" />
