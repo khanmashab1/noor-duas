@@ -54,7 +54,7 @@ const StoriesPage = () => {
 
   return (
     <div className="min-h-screen">
-      <SEO title="Islamic Stories" description="Inspiring stories from the Quran, Seerah & lives of the Sahaba in Arabic, Urdu & English" path="/stories" />
+      <SEO title="Islamic Stories – Quran, Seerah & Sahaba" description="Inspiring Islamic stories from the Quran, Prophet's Seerah & lives of the Sahaba. Read in Arabic, Urdu & English" path="/stories" breadcrumbs={[{ name: 'Stories', path: '/stories' }]} article={{ datePublished: '2025-01-01' }} keywords="islamic stories, quran stories, prophet stories, sahaba stories, seerah" />
       {/* Hero */}
       <section className="relative overflow-hidden bg-primary py-10 sm:py-16 text-primary-foreground islamic-pattern">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/90 to-primary" />

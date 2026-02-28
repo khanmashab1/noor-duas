@@ -230,7 +230,19 @@ const NamazPage = () => {
 
   return (
     <div className="min-h-screen">
-      <SEO title="Namaz Guide" description="Complete step-by-step Namaz guide with prayer times, Qibla compass, and detailed instructions in Arabic, Urdu & English" path="/namaz" />
+      <SEO
+        title="How to Pray Namaz – Step by Step Guide"
+        description="Complete step-by-step Namaz guide with prayer times, Qibla compass & instructions. Learn how to pray Salah in Islam with Arabic, Urdu & English"
+        path="/namaz"
+        breadcrumbs={[{ name: 'Namaz Guide', path: '/namaz' }]}
+        keywords="how to pray namaz, namaz step by step, salah guide, prayer times, qibla direction, how to pray in islam"
+        faq={[
+          { question: 'How many Rakaat are in each prayer?', answer: 'Fajr: 2, Dhuhr: 4, Asr: 4, Maghrib: 3, Isha: 4 obligatory Rakaat.' },
+          { question: 'What is the Qibla direction?', answer: 'Qibla is the direction of the Kaaba in Makkah, Saudi Arabia. Muslims face this direction during prayer.' },
+          { question: 'What are the steps of Namaz?', answer: 'Namaz includes Takbeer, Qiyam (standing), Ruku (bowing), Sujud (prostration), Tashahhud (sitting), and Salam (greeting).' },
+          { question: 'When are the 5 daily prayer times?', answer: 'Fajr (before sunrise), Dhuhr (after midday), Asr (afternoon), Maghrib (after sunset), Isha (night).' }
+        ]}
+      />
       {/* Hero */}
       <section className="relative overflow-hidden bg-primary py-10 sm:py-16 text-primary-foreground islamic-pattern">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/90 to-primary" />

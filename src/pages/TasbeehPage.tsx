@@ -47,7 +47,7 @@ const TasbeehPage = () => {
 
   return (
     <div className="container py-8">
-      <SEO title="Tasbeeh Counter" description="Digital Tasbeeh Counter for daily dhikr – SubhanAllah, Alhamdulillah, Allahu Akbar" path="/tasbeeh" />
+      <SEO title="Online Tasbeeh Counter – Digital Dhikr" description="Free online Tasbeeh counter for daily dhikr. Count SubhanAllah, Alhamdulillah & Allahu Akbar with target tracking" path="/tasbeeh" breadcrumbs={[{ name: 'Tasbeeh', path: '/tasbeeh' }]} keywords="tasbeeh counter online, digital tasbeeh, dhikr counter, subhanallah counter, islamic counter" />
       <h1 className="mb-8 text-center font-display text-3xl font-bold text-foreground">{t('tasbeeh')} {t('counter')}</h1>
 
       <div className="mx-auto max-w-md space-y-6">

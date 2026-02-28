@@ -1,4 +1,5 @@
 import { SEO } from '@/components/SEO';
+import { BreadcrumbNav } from '@/components/BreadcrumbNav';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useDua, useDuasByCategory } from '@/hooks/useDuas';
@@ -21,11 +22,9 @@ const DuaDetailPage = () => {
 
   return (
     <div className="container px-4 sm:px-6 py-6 sm:py-8">
-      <SEO title={dua.title || 'Dua'} description={dua.english_translation?.slice(0, 155) || 'Authentic dua from Quran & Sunnah'} path={`/dua/${id}`} />
+      <SEO title={dua.title || 'Dua'} description={dua.english_translation?.slice(0, 155) || 'Authentic dua from Quran & Sunnah with Arabic text, Urdu & English translation'} path={`/dua/${id}`} breadcrumbs={[{ name: 'Categories', path: '/categories' }, { name: dua.title || 'Dua', path: `/dua/${id}` }]} article={{ datePublished: dua.created_at }} keywords={`${dua.title || 'dua'}, islamic dua, quran dua, authentic dua`} />
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        <Link to={`/categories/${dua.category_id}`} className="mb-4 inline-block text-sm text-primary hover:underline">
-          ← {t('categories')}
-        </Link>
+        <BreadcrumbNav items={[{ label: t('categories'), path: '/categories' }, { label: dua.title || 'Dua' }]} />
 
         <DuaCard dua={dua} showExpand={false} />
 
