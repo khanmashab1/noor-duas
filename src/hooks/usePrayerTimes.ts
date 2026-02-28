@@ -123,7 +123,8 @@ export function usePrayerTimes() {
       const data = await res.json();
       if (data.code === 200) {
         const t = data.data.timings;
-        setTimes({ Fajr: t.Fajr, Sunrise: t.Sunrise, Dhuhr: t.Dhuhr, Asr: t.Asr, Maghrib: t.Maghrib, Isha: t.Isha });
+        const strip = (v: string) => v?.split(' ')[0] || v;
+        setTimes({ Fajr: strip(t.Fajr), Sunrise: strip(t.Sunrise), Dhuhr: strip(t.Dhuhr), Asr: strip(t.Asr), Maghrib: strip(t.Maghrib), Isha: strip(t.Isha) });
       } else {
         setError('Could not fetch prayer times');
       }
