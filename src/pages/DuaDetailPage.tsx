@@ -1,3 +1,4 @@
+import { SEO } from '@/components/SEO';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useDua, useDuasByCategory } from '@/hooks/useDuas';
@@ -20,6 +21,7 @@ const DuaDetailPage = () => {
 
   return (
     <div className="container px-4 sm:px-6 py-6 sm:py-8">
+      <SEO title={dua.title || 'Dua'} description={dua.english_translation?.slice(0, 155) || 'Authentic dua from Quran & Sunnah'} path={`/dua/${id}`} />
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
         <Link to={`/categories/${dua.category_id}`} className="mb-4 inline-block text-sm text-primary hover:underline">
           ← {t('categories')}

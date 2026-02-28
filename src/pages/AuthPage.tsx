@@ -1,3 +1,4 @@
+import { SEO } from '@/components/SEO';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -45,6 +46,7 @@ const AuthPage = () => {
 
   return (
     <div className="container flex min-h-[70vh] items-center justify-center py-8">
+      <SEO title="Login" description="Sign in to Noor Duas to save your favorite duas and track your dhikr" path="/auth" />
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
         <Card>
           <CardHeader className="text-center">

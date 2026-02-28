@@ -1,3 +1,4 @@
+import { SEO } from '@/components/SEO';
 import { useAuth } from '@/hooks/useAuth';
 import { useFavorites } from '@/hooks/useFavorites';
 import { DuaCard } from '@/components/DuaCard';
@@ -15,6 +16,7 @@ const FavoritesPage = () => {
 
   return (
     <div className="container py-8">
+      <SEO title="Favorite Duas" description="Your saved favorite duas from Quran & Sunnah" path="/favorites" />
       <h1 className="mb-8 font-display text-3xl font-bold text-foreground">{t('favorites')}</h1>
       {loading ? (
         <p className="text-center text-muted-foreground">{t('loading')}</p>

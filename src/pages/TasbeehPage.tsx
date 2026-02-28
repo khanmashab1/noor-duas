@@ -1,3 +1,4 @@
+import { SEO } from '@/components/SEO';
 import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -46,6 +47,7 @@ const TasbeehPage = () => {
 
   return (
     <div className="container py-8">
+      <SEO title="Tasbeeh Counter" description="Digital Tasbeeh Counter for daily dhikr – SubhanAllah, Alhamdulillah, Allahu Akbar" path="/tasbeeh" />
       <h1 className="mb-8 text-center font-display text-3xl font-bold text-foreground">{t('tasbeeh')} {t('counter')}</h1>
 
       <div className="mx-auto max-w-md space-y-6">

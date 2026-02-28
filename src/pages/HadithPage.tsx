@@ -1,3 +1,4 @@
+import { SEO } from '@/components/SEO';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, BookOpen } from 'lucide-react';
@@ -38,6 +39,7 @@ const HadithPage = () => {
 
   return (
     <div className="min-h-screen">
+      <SEO title="Hadith Collection" description="Browse authentic Hadiths from Sahih Bukhari, Sahih Muslim & more with Arabic, Urdu & English translations" path="/hadith" />
       {/* Hero */}
       <section className="bg-primary py-10 sm:py-14 text-primary-foreground islamic-pattern relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/90 to-primary" />

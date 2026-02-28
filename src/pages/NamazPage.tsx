@@ -1,3 +1,4 @@
+import { SEO } from '@/components/SEO';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useI18n } from '@/lib/i18n';
@@ -229,6 +230,7 @@ const NamazPage = () => {
 
   return (
     <div className="min-h-screen">
+      <SEO title="Namaz Guide" description="Complete step-by-step Namaz guide with prayer times, Qibla compass, and detailed instructions in Arabic, Urdu & English" path="/namaz" />
       {/* Hero */}
       <section className="relative overflow-hidden bg-primary py-10 sm:py-16 text-primary-foreground islamic-pattern">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/90 to-primary" />
