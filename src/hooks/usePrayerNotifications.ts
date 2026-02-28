@@ -66,6 +66,7 @@ export function usePrayerNotifications(times: PrayerTimesData | null) {
       if (perm === 'granted') {
         setEnabled(true);
         localStorage.setItem(NOTIF_STORAGE_KEY, 'true');
+        localStorage.removeItem(NOTIFIED_KEY); // reset daily sent cache on re-enable
       }
     } else {
       setEnabled(false);
@@ -108,9 +109,23 @@ export function usePrayerNotifications(times: PrayerTimesData | null) {
       }));
     };
 
+    let lastCheckTs = Date.now();
+
+    const isInWindow = (targetMinutes: number, nowMinutes: number, prevMinutes: number) => {
+      if (prevMinutes <= nowMinutes) {
+        return targetMinutes > prevMinutes && targetMinutes <= nowMinutes;
+      }
+      // Day rollover window (e.g. 23:59 -> 00:00)
+      return targetMinutes > prevMinutes || targetMinutes <= nowMinutes;
+    };
+
     const checkAndNotify = () => {
       const now = new Date();
       const nowMinutes = now.getHours() * 60 + now.getMinutes();
+      const prev = new Date(lastCheckTs);
+      const prevMinutes = prev.getHours() * 60 + prev.getMinutes();
+      lastCheckTs = Date.now();
+
       const notified = getNotifiedSet();
 
       const prayerOnly = PRAYER_KEYS.filter(k => k !== 'Sunrise');
@@ -126,9 +141,9 @@ export function usePrayerNotifications(times: PrayerTimesData | null) {
         const prayerMinutes = h * 60 + m;
         const info = PRAYER_INFO[key];
 
-        // Notify at prayer time
+        // Notify at prayer time (resilient to interval drift/background throttling)
         const atTimeKey = `${key}-at`;
-        if (!notified.has(atTimeKey) && nowMinutes >= prayerMinutes && nowMinutes <= prayerMinutes + 1) {
+        if (!notified.has(atTimeKey) && isInWindow(prayerMinutes, nowMinutes, prevMinutes)) {
           try {
             new Notification(`🕌 ${info.en} - ${info.ur}`, {
               body: `It's time for ${info.en} prayer (${info.ur} کا وقت ہو گیا ہے)`,
@@ -146,7 +161,7 @@ export function usePrayerNotifications(times: PrayerTimesData | null) {
         if (reminder > 0) {
           const preKey = `${key}-pre-${reminder}`;
           const reminderTime = prayerMinutes - reminder;
-          if (!notified.has(preKey) && nowMinutes >= reminderTime && nowMinutes <= reminderTime + 1) {
+          if (!notified.has(preKey) && isInWindow(reminderTime, nowMinutes, prevMinutes)) {
             try {
               new Notification(`⏰ ${info.en} in ${reminder} minutes`, {
                 body: `${info.ur} کی نماز میں ${reminder} منٹ باقی ہیں`,
