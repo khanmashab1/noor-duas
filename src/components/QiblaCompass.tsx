@@ -62,12 +62,40 @@ export const QiblaCompass = ({ latitude, longitude, city }: QiblaCompassProps) =
 
   useEffect(() => {
     if (!listening) return;
+
+    let usingAbsolute = false;
+
     const handler = (e: DeviceOrientationEvent) => {
-      const h = (e as any).webkitCompassHeading ?? (e.alpha != null ? (360 - e.alpha) : null);
-      if (h != null) setHeading(h);
+      // iOS provides webkitCompassHeading directly
+      const webkit = (e as any).webkitCompassHeading;
+      if (webkit != null) {
+        setHeading(webkit);
+        return;
+      }
+      // For absolute orientation (Android), alpha is degrees from North
+      if ((e as any).absolute && e.alpha != null) {
+        setHeading((360 - e.alpha) % 360);
+      }
     };
-    window.addEventListener('deviceorientation', handler, true);
-    return () => window.removeEventListener('deviceorientation', handler, true);
+
+    // Try absolute orientation first (Android)
+    const absHandler = (e: DeviceOrientationEvent) => {
+      usingAbsolute = true;
+      handler(e);
+    };
+
+    if ('ondeviceorientationabsolute' in window) {
+      window.addEventListener('deviceorientationabsolute' as any, absHandler, true);
+    }
+    // Also listen to regular event for iOS webkitCompassHeading
+    window.addEventListener('deviceorientation', (e) => {
+      if (!usingAbsolute) handler(e);
+    }, true);
+
+    return () => {
+      window.removeEventListener('deviceorientationabsolute' as any, absHandler, true);
+      window.removeEventListener('deviceorientation', handler, true);
+    };
   }, [listening]);
 
   const needleRotation = heading != null ? qiblaAngle - heading : qiblaAngle;
