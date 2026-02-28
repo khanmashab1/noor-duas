@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Compass, Navigation } from 'lucide-react';
@@ -7,6 +7,7 @@ import { useI18n } from '@/lib/i18n';
 
 const KAABA_LAT = 21.4225;
 const KAABA_LNG = 39.8262;
+const ALIGNMENT_THRESHOLD = 10; // degrees
 
 function calculateQiblaDirection(lat: number, lng: number): number {
   const φ1 = (lat * Math.PI) / 180;
@@ -49,41 +50,34 @@ export const QiblaCompass = ({ latitude, longitude, city }: QiblaCompassProps) =
       setCompassSupported(false);
       return;
     }
-
-    // iOS 13+ requires permission
     const DOE = DeviceOrientationEvent as any;
     if (typeof DOE.requestPermission === 'function') {
       try {
         const perm = await DOE.requestPermission();
-        if (perm !== 'granted') {
-          setPermissionDenied(true);
-          return;
-        }
-      } catch {
-        setPermissionDenied(true);
-        return;
-      }
+        if (perm !== 'granted') { setPermissionDenied(true); return; }
+      } catch { setPermissionDenied(true); return; }
     }
-
     setListening(true);
   }, []);
 
   useEffect(() => {
     if (!listening) return;
-
     const handler = (e: DeviceOrientationEvent) => {
-      // webkitCompassHeading for iOS, alpha for Android
       const h = (e as any).webkitCompassHeading ?? (e.alpha != null ? (360 - e.alpha) : null);
       if (h != null) setHeading(h);
     };
-
     window.addEventListener('deviceorientation', handler, true);
     return () => window.removeEventListener('deviceorientation', handler, true);
   }, [listening]);
 
-  // The needle rotation: if we have device heading, rotate so qibla points up
-  // Without heading, show static qibla bearing
   const needleRotation = heading != null ? qiblaAngle - heading : qiblaAngle;
+
+  // Check if phone is aligned with Qibla direction
+  const isAligned = useMemo(() => {
+    if (heading == null) return false;
+    const diff = Math.abs(((qiblaAngle - heading) % 360 + 360) % 360);
+    return diff < ALIGNMENT_THRESHOLD || diff > (360 - ALIGNMENT_THRESHOLD);
+  }, [heading, qiblaAngle]);
 
   const labels = {
     title: { en: 'Qibla Direction', ur: 'قبلہ کی سمت', ar: 'اتجاه القبلة' },
@@ -94,6 +88,7 @@ export const QiblaCompass = ({ latitude, longitude, city }: QiblaCompassProps) =
     permDenied: { en: 'Compass permission denied. Qibla bearing shown below.', ur: 'کمپاس کی اجازت نہیں دی گئی۔ قبلہ کا زاویہ نیچے دکھایا گیا ہے۔', ar: 'تم رفض إذن البوصلة. يظهر الاتجاه أدناه.' },
     from: { en: 'from', ur: 'سے', ar: 'من' },
     compassActive: { en: 'Point your phone to find Qibla', ur: 'قبلہ تلاش کرنے کے لیے فون کو گھمائیں', ar: 'وجّه هاتفك للعثور على القبلة' },
+    aligned: { en: '✅ You are facing Qibla!', ur: '✅ آپ قبلہ رُخ ہیں!', ar: '✅ أنت تواجه القبلة!' },
   };
 
   return (
@@ -103,7 +98,7 @@ export const QiblaCompass = ({ latitude, longitude, city }: QiblaCompassProps) =
       exit={{ opacity: 0, height: 0 }}
       className="overflow-hidden mb-6"
     >
-      <Card className="border-border/50 overflow-hidden">
+      <Card className={`border-border/50 overflow-hidden transition-all duration-500 ${isAligned ? 'ring-2 ring-primary shadow-[0_0_30px_hsl(var(--primary)/0.3)]' : ''}`}>
         <CardContent className="p-5">
           <h3 className="font-display font-bold text-foreground flex items-center gap-2 mb-4">
             <Compass className="h-4 w-4 text-primary" />
@@ -112,13 +107,34 @@ export const QiblaCompass = ({ latitude, longitude, city }: QiblaCompassProps) =
 
           <div className="flex flex-col items-center gap-6">
             {/* Compass Visual */}
-            <div className="relative w-64 h-64 sm:w-72 sm:h-72">
+            <div className={`relative w-64 h-64 sm:w-72 sm:h-72 transition-all duration-700 ${isAligned ? 'scale-105' : ''}`}>
+              {/* Glow ring when aligned */}
+              <div className={`absolute inset-[-4px] rounded-full transition-all duration-700 ${
+                isAligned 
+                  ? 'bg-gradient-to-r from-primary/20 via-primary/40 to-primary/20 animate-[spin_4s_linear_infinite] blur-md' 
+                  : 'opacity-0'
+              }`} />
+
               {/* Outer ring */}
-              <div className="absolute inset-0 rounded-full border-2 border-border/30 bg-background/50" />
+              <div className={`absolute inset-0 rounded-full border-2 bg-background/50 transition-colors duration-500 ${
+                isAligned ? 'border-primary/60' : 'border-border/30'
+              }`} />
+
+              {/* Inner glow when aligned */}
+              <AnimatePresence>
+                {isAligned && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    className="absolute inset-4 rounded-full bg-primary/5"
+                  />
+                )}
+              </AnimatePresence>
               
               {/* Cardinal directions */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="absolute top-3 text-xs font-bold text-muted-foreground">N</span>
+                <span className={`absolute top-3 text-xs font-bold transition-colors ${isAligned ? 'text-primary' : 'text-muted-foreground'}`}>N</span>
                 <span className="absolute bottom-3 text-xs font-bold text-muted-foreground">S</span>
                 <span className="absolute left-3 text-xs font-bold text-muted-foreground">W</span>
                 <span className="absolute right-3 text-xs font-bold text-muted-foreground">E</span>
@@ -140,7 +156,7 @@ export const QiblaCompass = ({ latitude, longitude, city }: QiblaCompassProps) =
                       x2={100 + r2 * Math.sin(rad)}
                       y2={100 - r2 * Math.cos(rad)}
                       stroke="currentColor"
-                      className={isMajor ? 'text-muted-foreground' : 'text-border'}
+                      className={isMajor ? (isAligned ? 'text-primary' : 'text-muted-foreground') : 'text-border'}
                       strokeWidth={isMajor ? 1.5 : 0.5}
                     />
                   );
@@ -154,16 +170,25 @@ export const QiblaCompass = ({ latitude, longitude, city }: QiblaCompassProps) =
                 transition={{ type: 'spring', stiffness: 50, damping: 15 }}
               >
                 <svg width="200" height="200" viewBox="0 0 200 200" className="w-full h-full">
-                  {/* Needle pointing up (toward Qibla) */}
+                  {/* Glow filter */}
+                  <defs>
+                    <filter id="needle-glow" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur stdDeviation="3" result="blur" />
+                      <feMerge>
+                        <feMergeNode in="blur" />
+                        <feMergeNode in="SourceGraphic" />
+                      </feMerge>
+                    </filter>
+                  </defs>
                   <polygon
                     points="100,25 93,100 107,100"
                     className="fill-primary"
+                    filter={isAligned ? 'url(#needle-glow)' : undefined}
                   />
                   <polygon
                     points="100,175 93,100 107,100"
                     className="fill-muted-foreground/30"
                   />
-                  {/* Center dot */}
                   <circle cx="100" cy="100" r="6" className="fill-primary" />
                   <circle cx="100" cy="100" r="3" className="fill-background" />
                 </svg>
@@ -175,11 +200,11 @@ export const QiblaCompass = ({ latitude, longitude, city }: QiblaCompassProps) =
                 animate={{ rotate: needleRotation }}
                 transition={{ type: 'spring', stiffness: 50, damping: 15 }}
               >
-                <div className="mt-2">
+                <div className="mt-1">
                   <motion.span
-                    className="text-lg"
-                    animate={{ rotate: -needleRotation }}
-                    transition={{ type: 'spring', stiffness: 50, damping: 15 }}
+                    className={`text-xl transition-all ${isAligned ? 'drop-shadow-[0_0_8px_hsl(var(--primary)/0.8)]' : ''}`}
+                    animate={{ rotate: -needleRotation, scale: isAligned ? [1, 1.2, 1] : 1 }}
+                    transition={isAligned ? { scale: { repeat: Infinity, duration: 1.5 } } : { type: 'spring', stiffness: 50, damping: 15 }}
                   >
                     🕋
                   </motion.span>
@@ -187,12 +212,30 @@ export const QiblaCompass = ({ latitude, longitude, city }: QiblaCompassProps) =
               </motion.div>
             </div>
 
-            {/* Status message */}
-            {listening && heading != null && (
-              <p className="text-xs text-primary font-medium animate-pulse">
-                {labels.compassActive[lang]}
-              </p>
-            )}
+            {/* Status messages */}
+            <AnimatePresence mode="wait">
+              {isAligned ? (
+                <motion.p
+                  key="aligned"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="text-sm font-bold text-primary text-center"
+                >
+                  {labels.aligned[lang]}
+                </motion.p>
+              ) : listening && heading != null ? (
+                <motion.p
+                  key="active"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="text-xs text-primary font-medium animate-pulse"
+                >
+                  {labels.compassActive[lang]}
+                </motion.p>
+              ) : null}
+            </AnimatePresence>
 
             {/* Compass controls */}
             {!listening && !permissionDenied && compassSupported && (
@@ -203,26 +246,25 @@ export const QiblaCompass = ({ latitude, longitude, city }: QiblaCompassProps) =
             )}
 
             {!compassSupported && (
-              <p className="text-xs text-muted-foreground text-center max-w-xs">
-                {labels.noCompass[lang]}
-              </p>
+              <p className="text-xs text-muted-foreground text-center max-w-xs">{labels.noCompass[lang]}</p>
             )}
-
             {permissionDenied && (
-              <p className="text-xs text-muted-foreground text-center max-w-xs">
-                {labels.permDenied[lang]}
-              </p>
+              <p className="text-xs text-muted-foreground text-center max-w-xs">{labels.permDenied[lang]}</p>
             )}
 
             {/* Info cards */}
             <div className="grid grid-cols-2 gap-3 w-full max-w-sm">
-              <div className="rounded-xl bg-primary/5 border border-primary/10 p-3 text-center">
+              <div className={`rounded-xl border p-3 text-center transition-all duration-500 ${
+                isAligned ? 'bg-primary/10 border-primary/30' : 'bg-primary/5 border-primary/10'
+              }`}>
                 <p className="text-xs text-muted-foreground">{labels.bearing[lang]}</p>
                 <p className="text-lg font-bold text-primary font-mono tabular-nums">
                   {qiblaAngle.toFixed(1)}°
                 </p>
               </div>
-              <div className="rounded-xl bg-primary/5 border border-primary/10 p-3 text-center">
+              <div className={`rounded-xl border p-3 text-center transition-all duration-500 ${
+                isAligned ? 'bg-primary/10 border-primary/30' : 'bg-primary/5 border-primary/10'
+              }`}>
                 <p className="text-xs text-muted-foreground">{labels.distance[lang]}</p>
                 <p className="text-lg font-bold text-primary font-mono tabular-nums">
                   {distance.toFixed(0)} km
