@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Locate, Clock, Settings2, ChevronDown, CalendarDays, Bell, BellOff, BellRing, Minus, Plus, Download, Volume2, VolumeX } from 'lucide-react';
+import { MapPin, Locate, Clock, Settings2, ChevronDown, CalendarDays, Minus, Plus, Download } from 'lucide-react';
 
 function to12Hr(time24: string): string {
   const [h, m] = time24.split(':').map(Number);
@@ -16,8 +16,6 @@ import {
   usePrayerTimes, fetchMonthlyTimes,
   PRAYER_KEYS, PRAYER_INFO, PAKISTAN_CITIES, PrayerKey,
 } from '@/hooks/usePrayerTimes';
-import { usePrayerNotifications, REMINDER_OPTIONS, ReminderMinutes } from '@/hooks/usePrayerNotifications';
-import { Switch } from '@/components/ui/switch';
 
 const PrayerTimeCard = ({
   prayerKey, time, isCurrent, isNext, lang, countdown,
@@ -64,11 +62,8 @@ export const PrayerTimes = () => {
     settings, updateSettings, times, loading, error, detectGPS,
     currentPrayer, nextPrayer, nextPrayerTime,
   } = usePrayerTimes();
-  const { notificationsEnabled, toggleNotifications, notifSettings, updatePrayerNotif, adhanEnabled, toggleAdhan } = usePrayerNotifications(times);
-
   const [countdown, setCountdown] = useState('');
   const [showSettings, setShowSettings] = useState(false);
-  const [showNotifSettings, setShowNotifSettings] = useState(false);
   const [showMonthly, setShowMonthly] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
   const monthlyRef = useRef<HTMLDivElement>(null);
@@ -265,7 +260,6 @@ export const PrayerTimes = () => {
     adjustments: { en: 'Time Adjustments (± min)', ar: 'تعديل الوقت (± دقيقة)', ur: 'وقت کی ایڈجسٹمنٹ (± منٹ)' },
     monthly: { en: 'Monthly Timetable', ar: 'الجدول الشهري', ur: 'ماہانہ ٹائم ٹیبل' },
     jummah: { en: '🕌 Jummah Mubarak! Don\'t forget Jummah prayer today.', ar: '🕌 جمعة مباركة! لا تنسَ صلاة الجمعة اليوم.', ur: '🕌 جمعہ مبارک! آج جمعہ کی نماز مت بھولیں۔' },
-    notifications: { en: 'Enable Notifications', ar: 'تفعيل الإشعارات', ur: 'نوٹیفکیشنز آن کریں' },
     date: { en: 'Date', ar: 'التاريخ', ur: 'تاریخ' },
   };
 
@@ -309,19 +303,6 @@ export const PrayerTimes = () => {
             <CalendarDays className="h-4 w-4" />
             <span className="hidden sm:inline">{labels.monthly[lang]}</span>
           </Button>
-        {'Notification' in window && (
-            <>
-              <Button size="sm" variant={notificationsEnabled ? 'default' : 'outline'} onClick={notificationsEnabled ? () => setShowNotifSettings(!showNotifSettings) : toggleNotifications} className="gap-1.5">
-                {notificationsEnabled ? <BellRing className="h-4 w-4" /> : <Bell className="h-4 w-4" />}
-                <span className="hidden sm:inline">{notificationsEnabled ? (lang === 'ur' ? 'ترتیبات' : 'Alerts') : (lang === 'ur' ? 'نوٹیفکیشن' : 'Notify')}</span>
-              </Button>
-              {notificationsEnabled && (
-                <Button size="sm" variant="ghost" onClick={toggleNotifications} className="gap-1 text-destructive hover:text-destructive">
-                  <BellOff className="h-4 w-4" />
-                </Button>
-              )}
-            </>
-          )}
         </div>
       </div>
 
@@ -436,92 +417,6 @@ export const PrayerTimes = () => {
         )}
       </AnimatePresence>
 
-      {/* Notification Settings Panel */}
-      <AnimatePresence>
-        {showNotifSettings && notificationsEnabled && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden mb-6"
-          >
-            <Card className="border-border/50">
-              <CardContent className="p-5 space-y-4">
-                <h3 className="font-display font-bold text-foreground flex items-center gap-2">
-                  <BellRing className="h-4 w-4 text-primary" />
-                  {lang === 'ur' ? 'نوٹیفکیشن کی ترتیبات' : lang === 'ar' ? 'إعدادات الإشعارات' : 'Notification Settings'}
-                </h3>
-                <p className="text-xs text-muted-foreground">
-                  {lang === 'ur' ? 'ہر نماز کے لیے الرٹ اور یاددہانی کا وقت منتخب کریں' : 'Toggle alerts and set reminder time for each prayer'}
-                </p>
-
-                {/* Adhan Toggle */}
-                <div className="flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
-                  <div className="flex items-center gap-3">
-                    <span className="text-lg">🔊</span>
-                    <div>
-                      <p className="text-sm font-medium text-foreground">
-                        {lang === 'ur' ? 'اذان کی آواز' : lang === 'ar' ? 'صوت الأذان' : 'Adhan Sound'}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {lang === 'ur' ? 'نماز کے وقت اذان بجائیں' : 'Play adhan audio at prayer time'}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => { const a = new Audio('/audio/adhan.mp3'); a.volume = 0.5; a.play().catch(() => {}); setTimeout(() => { a.pause(); a.currentTime = 0; }, 8000); }}>
-                      {adhanEnabled ? <Volume2 className="h-4 w-4 text-primary" /> : <VolumeX className="h-4 w-4 text-muted-foreground" />}
-                    </Button>
-                    <Switch
-                      checked={adhanEnabled}
-                      onCheckedChange={toggleAdhan}
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  {PRAYER_KEYS.filter(k => k !== 'Sunrise').map(key => {
-                    const info = PRAYER_INFO[key];
-                    const ps = notifSettings[key];
-                    return (
-                      <div key={key} className="flex items-center justify-between rounded-lg border border-border/50 px-4 py-3">
-                        <div className="flex items-center gap-3">
-                          <span className="text-lg">{info.icon}</span>
-                          <div>
-                            <p className="text-sm font-medium text-foreground">{info.en}</p>
-                            <p className="text-xs text-muted-foreground font-urdu">{info.ur}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <Select
-                            value={String(ps?.reminderMinutes ?? 5)}
-                            onValueChange={(v) => updatePrayerNotif(key, { reminderMinutes: Number(v) as ReminderMinutes })}
-                            disabled={!ps?.enabled}
-                          >
-                            <SelectTrigger className="w-[130px] h-8 text-xs">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {REMINDER_OPTIONS.map(opt => (
-                                <SelectItem key={opt.value} value={String(opt.value)}>
-                                  {lang === 'ur' ? opt.label.ur : opt.label.en}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <Switch
-                            checked={ps?.enabled ?? true}
-                            onCheckedChange={(checked) => updatePrayerNotif(key, { enabled: checked })}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Prayer Time Cards */}
       {times && (
