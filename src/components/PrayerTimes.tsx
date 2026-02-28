@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Locate, Clock, Settings2, ChevronDown, CalendarDays, Minus, Plus, Download } from 'lucide-react';
+import { MapPin, Locate, Clock, Settings2, ChevronDown, CalendarDays, Minus, Plus, Download, Compass } from 'lucide-react';
 
 function to12Hr(time24: string): string {
   const [h, m] = time24.split(':').map(Number);
@@ -16,6 +16,7 @@ import {
   usePrayerTimes, fetchMonthlyTimes,
   PRAYER_KEYS, PRAYER_INFO, PAKISTAN_CITIES, PrayerKey,
 } from '@/hooks/usePrayerTimes';
+import { QiblaCompass } from '@/components/QiblaCompass';
 
 const PrayerTimeCard = ({
   prayerKey, time, isCurrent, isNext, lang, countdown,
@@ -64,6 +65,7 @@ export const PrayerTimes = () => {
   } = usePrayerTimes();
   const [countdown, setCountdown] = useState('');
   const [showSettings, setShowSettings] = useState(false);
+  const [showQibla, setShowQibla] = useState(false);
   const [showMonthly, setShowMonthly] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
   const monthlyRef = useRef<HTMLDivElement>(null);
@@ -303,6 +305,10 @@ export const PrayerTimes = () => {
             <CalendarDays className="h-4 w-4" />
             <span className="hidden sm:inline">{labels.monthly[lang]}</span>
           </Button>
+          <Button size="sm" variant={showQibla ? 'default' : 'outline'} onClick={() => setShowQibla(!showQibla)} className="gap-1.5">
+            <Compass className="h-4 w-4" />
+            <span className="hidden sm:inline">{lang === 'ur' ? 'قبلہ' : 'Qibla'}</span>
+          </Button>
         </div>
       </div>
 
@@ -414,6 +420,13 @@ export const PrayerTimes = () => {
               </CardContent>
             </Card>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Qibla Compass */}
+      <AnimatePresence>
+        {showQibla && (
+          <QiblaCompass latitude={settings.latitude} longitude={settings.longitude} city={settings.city} />
         )}
       </AnimatePresence>
 
