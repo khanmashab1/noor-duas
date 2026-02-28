@@ -13,6 +13,7 @@ import { HadithCard } from '@/components/HadithCard';
 import { NextPrayerCountdown } from '@/components/NextPrayerCountdown';
 import { Sunrise, Sunset, Shield, Plane, Heart, Moon as MoonIcon, Coins, Gem, BookOpen, Library } from 'lucide-react';
 import { useMemo, useState, useEffect } from 'react';
+import { useDailyNotifications } from '@/hooks/useDailyNotifications';
 
 const categoryIcons: Record<string, React.ReactNode> = {
   sunrise: <Sunrise className="h-6 w-6" />,
@@ -30,6 +31,7 @@ const HomePage = () => {
   const { t, lang } = useI18n();
   const [storyExpanded, setStoryExpanded] = useState(false);
   const [hijriDate, setHijriDate] = useState<{ day: string; weekday: string; weekdayAr: string; month: string; monthAr: string; year: string } | null>(null);
+  useDailyNotifications();
 
   useEffect(() => {
     const { latitude, longitude } = loadSettings();
