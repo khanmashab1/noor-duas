@@ -84,17 +84,19 @@ export const QiblaCompass = ({ latitude, longitude, city }: QiblaCompassProps) =
       handler(e);
     };
 
+    const fallbackHandler = (e: DeviceOrientationEvent) => {
+      if (!usingAbsolute) handler(e);
+    };
+
     if ('ondeviceorientationabsolute' in window) {
       window.addEventListener('deviceorientationabsolute' as any, absHandler, true);
     }
     // Also listen to regular event for iOS webkitCompassHeading
-    window.addEventListener('deviceorientation', (e) => {
-      if (!usingAbsolute) handler(e);
-    }, true);
+    window.addEventListener('deviceorientation', fallbackHandler, true);
 
     return () => {
       window.removeEventListener('deviceorientationabsolute' as any, absHandler, true);
-      window.removeEventListener('deviceorientation', handler, true);
+      window.removeEventListener('deviceorientation', fallbackHandler, true);
     };
   }, [listening]);
 
