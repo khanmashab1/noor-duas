@@ -17,7 +17,17 @@ export interface PrayerSettings {
   longitude: number;
   adjustments: Record<string, number>; // per-prayer ± minutes
   locationSource: 'gps' | 'manual';
+  ramadanMode: boolean;
 }
+
+export const RAMADAN_ADJUSTMENTS: Record<string, number> = {
+  Fajr: -2,    // Start Sehri earlier (safety margin)
+  Sunrise: 0,
+  Dhuhr: 0,
+  Asr: 0,
+  Maghrib: 3,  // Delay Iftar slightly for safety
+  Isha: 0,
+};
 
 export const PRAYER_KEYS = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'] as const;
 export type PrayerKey = typeof PRAYER_KEYS[number];
@@ -70,8 +80,9 @@ const DEFAULT_SETTINGS: PrayerSettings = {
   city: 'Islamabad',
   latitude: 33.6844,
   longitude: 73.0479,
-  adjustments: { Fajr: 0, Sunrise: 0, Dhuhr: 0, Asr: 0, Maghrib: 3, Isha: 0 },
+  adjustments: { Fajr: 0, Sunrise: 0, Dhuhr: 0, Asr: 0, Maghrib: 0, Isha: 0 },
   locationSource: 'manual',
+  ramadanMode: false,
 };
 
 const STORAGE_KEY = 'noor-prayer-settings';
@@ -140,18 +151,21 @@ export function usePrayerTimes() {
     fetchTimes(settings.latitude, settings.longitude, settings.method, settings.school);
   }, [settings.latitude, settings.longitude, settings.method, settings.school, fetchTimes]);
 
-  // Apply adjustments
+  // Apply adjustments (manual + Ramadan)
   const adjustedTimes = useMemo(() => {
     if (!times) return null;
     const result: PrayerTimesData = { ...times };
     for (const key of PRAYER_KEYS) {
-      const adj = settings.adjustments[key] || 0;
+      let adj = settings.adjustments[key] || 0;
+      if (settings.ramadanMode) {
+        adj += RAMADAN_ADJUSTMENTS[key] || 0;
+      }
       if (adj !== 0) {
         result[key] = applyAdjustment(result[key], adj);
       }
     }
     return result;
-  }, [times, settings.adjustments]);
+  }, [times, settings.adjustments, settings.ramadanMode]);
 
   const detectGPS = useCallback(() => {
     if (!navigator.geolocation) {
