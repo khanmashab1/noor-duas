@@ -70,7 +70,7 @@ const DEFAULT_SETTINGS: PrayerSettings = {
   city: 'Islamabad',
   latitude: 33.6844,
   longitude: 73.0479,
-  adjustments: { Fajr: 0, Sunrise: 0, Dhuhr: 0, Asr: 0, Maghrib: 0, Isha: 0 },
+  adjustments: { Fajr: 0, Sunrise: 0, Dhuhr: 0, Asr: 0, Maghrib: 3, Isha: 0 },
   locationSource: 'manual',
 };
 
