@@ -2,6 +2,7 @@ import { useEffect, useCallback } from 'react';
 import { useRandomHadith } from '@/hooks/useHadiths';
 import { useAllDuas } from '@/hooks/useDuas';
 import { toast } from '@/hooks/use-toast';
+import { loadNotificationPrefs } from '@/hooks/useNotificationSettings';
 
 const TOAST_SHOWN_KEY = 'noor-daily-toast-shown';
 const PUSH_PERMISSION_KEY = 'noor-push-permission-asked';
@@ -28,12 +29,12 @@ export function useDailyNotifications() {
     if (lastShown === today) return;
     if (!dailyHadith && !allDuas?.length) return;
 
+    const prefs = loadNotificationPrefs();
     localStorage.setItem(TOAST_SHOWN_KEY, today);
 
     const dailyDua = getDailyDua(allDuas);
 
-    // Show Hadith toast
-    if (dailyHadith) {
+    if (dailyHadith && prefs.hadithToast) {
       setTimeout(() => {
         toast({
           title: '📖 Hadith of the Day',
@@ -45,8 +46,7 @@ export function useDailyNotifications() {
       }, 1500);
     }
 
-    // Show Dua toast
-    if (dailyDua) {
+    if (dailyDua && prefs.duaToast) {
       setTimeout(() => {
         toast({
           title: '🤲 Dua of the Day',
@@ -79,10 +79,12 @@ export function useDailyNotifications() {
     const pushKey = `noor-push-sent-${today}`;
     if (localStorage.getItem(pushKey)) return;
 
+    const prefs = loadNotificationPrefs();
+
     const sendDailyPush = () => {
       localStorage.setItem(pushKey, 'true');
       
-      if (dailyHadith) {
+      if (dailyHadith && prefs.hadithPush) {
         sendPushNotification(
           '📖 Hadith of the Day',
           truncate(dailyHadith.english_translation || dailyHadith.urdu_translation || dailyHadith.arabic_text, 200)
@@ -90,7 +92,7 @@ export function useDailyNotifications() {
       }
 
       const dailyDua = getDailyDua(allDuas);
-      if (dailyDua) {
+      if (dailyDua && prefs.duaPush) {
         setTimeout(() => {
           sendPushNotification(
             '🤲 Dua of the Day',
@@ -103,7 +105,6 @@ export function useDailyNotifications() {
     if (Notification.permission === 'granted') {
       sendDailyPush();
     } else if (Notification.permission !== 'denied') {
-      // Ask permission after a delay so it's not intrusive
       const alreadyAsked = localStorage.getItem(PUSH_PERMISSION_KEY);
       if (!alreadyAsked) {
         setTimeout(() => {

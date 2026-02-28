@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Sun, Moon, Menu, X, Heart, User, LogOut, Shield, Search } from 'lucide-react';
+import { Sun, Moon, Menu, X, Heart, User, LogOut, Shield, Search, Bell } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -161,6 +161,9 @@ export const Header = () => {
               <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
                   <Link to="/profile"><User className="h-4 w-4 ltr:mr-2 rtl:ml-2" />{t('profile')}</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/notifications"><Bell className="h-4 w-4 ltr:mr-2 rtl:ml-2" />{lang === 'ur' ? 'اطلاعات' : lang === 'ar' ? 'الإشعارات' : 'Notifications'}</Link>
                 </DropdownMenuItem>
                 {isAdmin && (
                   <DropdownMenuItem asChild>
