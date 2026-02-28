@@ -136,6 +136,25 @@ export function usePrayerTimes() {
         const t = data.data.timings;
         const strip = (v: string) => v?.split(' ')[0] || v;
         setTimes({ Fajr: strip(t.Fajr), Sunrise: strip(t.Sunrise), Dhuhr: strip(t.Dhuhr), Asr: strip(t.Asr), Maghrib: strip(t.Maghrib), Isha: strip(t.Isha) });
+
+        // Auto-enable Ramadan mode during Ramadan (Hijri month 9)
+        try {
+          const hijriMonth = Number(data.data.date?.hijri?.month?.number);
+          if (hijriMonth === 9) {
+            // Auto-enable if not manually toggled off today
+            const autoKey = 'noor-ramadan-auto-' + today.toDateString();
+            if (!localStorage.getItem(autoKey)) {
+              setSettingsState(prev => {
+                if (!prev.ramadanMode) {
+                  const next = { ...prev, ramadanMode: true };
+                  saveSettings(next);
+                  return next;
+                }
+                return prev;
+              });
+            }
+          }
+        } catch { /* ignore hijri detection errors */ }
       } else {
         setError('Could not fetch prayer times');
       }
