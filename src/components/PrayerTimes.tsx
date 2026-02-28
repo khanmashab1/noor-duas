@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Locate, Clock, Settings2, ChevronDown, CalendarDays, Minus, Plus, Download, Compass } from 'lucide-react';
+import { MapPin, Locate, Clock, Settings2, ChevronDown, CalendarDays, Minus, Plus, Download, Compass, Moon } from 'lucide-react';
 
 function to12Hr(time24: string): string {
   const [h, m] = time24.split(':').map(Number);
@@ -14,8 +14,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useI18n } from '@/lib/i18n';
 import {
   usePrayerTimes, fetchMonthlyTimes,
-  PRAYER_KEYS, PRAYER_INFO, PAKISTAN_CITIES, PrayerKey,
+  PRAYER_KEYS, PRAYER_INFO, PAKISTAN_CITIES, PrayerKey, RAMADAN_ADJUSTMENTS,
 } from '@/hooks/usePrayerTimes';
+import { Switch } from '@/components/ui/switch';
 import { QiblaCompass } from '@/components/QiblaCompass';
 
 const PrayerTimeCard = ({
@@ -263,6 +264,8 @@ export const PrayerTimes = () => {
     monthly: { en: 'Monthly Timetable', ar: 'الجدول الشهري', ur: 'ماہانہ ٹائم ٹیبل' },
     jummah: { en: '🕌 Jummah Mubarak! Don\'t forget Jummah prayer today.', ar: '🕌 جمعة مباركة! لا تنسَ صلاة الجمعة اليوم.', ur: '🕌 جمعہ مبارک! آج جمعہ کی نماز مت بھولیں۔' },
     date: { en: 'Date', ar: 'التاريخ', ur: 'تاریخ' },
+    ramadan: { en: 'Ramadan Mode', ar: 'وضع رمضان', ur: 'رمضان موڈ' },
+    ramadanDesc: { en: 'Auto-adjusts Sehri (Fajr -2 min) & Iftar (Maghrib +3 min) for safety', ar: 'ضبط تلقائي للسحور والإفطار', ur: 'سحری (فجر -2 منٹ) اور افطار (مغرب +3 منٹ) خودکار ایڈجسٹمنٹ' },
   };
 
   const timeStr = currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
@@ -309,6 +312,15 @@ export const PrayerTimes = () => {
             <Compass className="h-4 w-4" />
             <span className="hidden sm:inline">{lang === 'ur' ? 'قبلہ' : 'Qibla'}</span>
           </Button>
+          <Button
+            size="sm"
+            variant={settings.ramadanMode ? 'default' : 'outline'}
+            onClick={() => updateSettings({ ramadanMode: !settings.ramadanMode })}
+            className="gap-1.5"
+          >
+            <Moon className="h-4 w-4" />
+            <span className="hidden sm:inline">{labels.ramadan[lang]}</span>
+          </Button>
         </div>
       </div>
 
@@ -330,6 +342,22 @@ export const PrayerTimes = () => {
           </div>
           <div className="font-mono text-xl sm:text-2xl font-bold text-primary tabular-nums">
             {countdown}
+          </div>
+        </motion.div>
+      )}
+
+      {/* Ramadan Mode Banner */}
+      {settings.ramadanMode && (
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+          className="mb-6 p-4 rounded-xl bg-accent/20 border border-accent/30 flex items-center gap-3">
+          <span className="text-2xl">🌙</span>
+          <div className="flex-1">
+            <p className="font-display font-bold text-sm text-foreground">{labels.ramadan[lang]} — {lang === 'ur' ? 'فعال' : lang === 'ar' ? 'مفعّل' : 'Active'}</p>
+            <p className="text-xs text-muted-foreground">{labels.ramadanDesc[lang]}</p>
+          </div>
+          <div className="flex gap-2 text-xs text-muted-foreground">
+            <span className="bg-muted px-2 py-1 rounded">{lang === 'ur' ? 'سحری' : 'Sehri'}: Fajr -2m</span>
+            <span className="bg-muted px-2 py-1 rounded">{lang === 'ur' ? 'افطار' : 'Iftar'}: Maghrib +3m</span>
           </div>
         </motion.div>
       )}
@@ -393,6 +421,21 @@ export const PrayerTimes = () => {
                       </SelectContent>
                     </Select>
                   </div>
+                </div>
+
+                {/* Ramadan Mode Toggle */}
+                <div className="flex items-center justify-between rounded-lg border border-border/50 px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">🌙</span>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{labels.ramadan[lang]}</p>
+                      <p className="text-xs text-muted-foreground">{labels.ramadanDesc[lang]}</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={settings.ramadanMode}
+                    onCheckedChange={(checked) => updateSettings({ ramadanMode: checked })}
+                  />
                 </div>
 
                 {/* Time Adjustments */}
