@@ -1,3 +1,4 @@
+import { SEO } from '@/components/SEO';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -88,6 +89,15 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen">
+      <SEO path="/" />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Noor Duas",
+        "url": "https://noor-duas.vercel.app",
+        "description": "Authentic Duas & Hadiths from the Quran and Sahih Hadith with Arabic, Urdu & English translations",
+        "potentialAction": { "@type": "SearchAction", "target": "https://noor-duas.vercel.app/categories?q={search_term_string}", "query-input": "required name=search_term_string" }
+      })}} />
       {/* Next Prayer Countdown */}
       <NextPrayerCountdown />
 

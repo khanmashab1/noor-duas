@@ -1,3 +1,4 @@
+import { SEO } from '@/components/SEO';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
@@ -35,6 +36,7 @@ const CategoriesPage = () => {
   if (id && duas) {
     return (
       <div className="container px-4 sm:px-6 py-6 sm:py-8">
+        <SEO title={currentCategory ? getCategoryName(currentCategory) : 'Category'} description={`Authentic duas for ${currentCategory?.name || 'this category'} from Quran & Sunnah`} path={`/categories/${id}`} />
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <Link to="/categories" className="mb-4 inline-block text-sm text-primary hover:underline">
             ← {t('categories')}
@@ -55,6 +57,7 @@ const CategoriesPage = () => {
 
   return (
     <div className="container px-4 sm:px-6 py-6 sm:py-8">
+      <SEO title="Dua Categories" description="Browse authentic dua categories from Quran & Sunnah – morning, evening, protection, travel & more" path="/categories" />
       <h1 className="mb-6 sm:mb-8 font-display text-2xl sm:text-3xl font-bold text-foreground">{t('categories')}</h1>
       <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {categories?.map((cat, i) => (

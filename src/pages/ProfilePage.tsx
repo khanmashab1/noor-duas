@@ -1,3 +1,4 @@
+import { SEO } from '@/components/SEO';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useI18n } from '@/lib/i18n';
@@ -13,6 +14,7 @@ const ProfilePage = () => {
 
   return (
     <div className="container flex min-h-[60vh] items-center justify-center py-8">
+      <SEO title="Profile" description="Manage your Noor Duas profile" path="/profile" />
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-3xl">

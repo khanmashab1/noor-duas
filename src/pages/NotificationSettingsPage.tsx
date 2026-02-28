@@ -1,3 +1,4 @@
+import { SEO } from '@/components/SEO';
 import { motion } from 'framer-motion';
 import { Bell, BellOff, Smartphone, MessageSquare } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -57,6 +58,7 @@ const NotificationSettingsPage = () => {
 
   return (
     <div className="container px-4 sm:px-6 py-8 sm:py-12 max-w-2xl">
+      <SEO title="Notification Settings" description="Configure daily hadith and dua reminders" path="/notifications" />
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground flex items-center gap-2 mb-6">
           <Bell className="h-5 w-5 text-primary" />

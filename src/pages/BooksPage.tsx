@@ -1,3 +1,4 @@
+import { SEO } from '@/components/SEO';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
@@ -57,6 +58,7 @@ const BooksPage = () => {
 
   return (
     <div className="min-h-screen">
+      <SEO title="Islamic Books" description="Read authentic Islamic books – Hadith, Fiqh, Tafsir, Seerah & more in Arabic, Urdu & English" path="/books" />
       {/* Hero */}
       <section className="relative overflow-hidden bg-primary py-10 sm:py-16 text-primary-foreground islamic-pattern">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/90 to-primary" />

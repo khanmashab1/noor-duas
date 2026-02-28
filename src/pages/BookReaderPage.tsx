@@ -1,3 +1,4 @@
+import { SEO } from '@/components/SEO';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -124,6 +125,7 @@ const BookReaderPage = () => {
 
   return (
     <div className="min-h-screen">
+      <SEO title={book.title} description={book.description?.slice(0, 155) || `Read ${book.title} – Islamic book on Noor Duas`} path={`/books/${id}`} />
       {/* Header */}
       <section className="sticky top-0 z-30 bg-primary text-primary-foreground shadow-lg">
         <div className="container px-4 sm:px-6 py-3 flex items-center gap-2">

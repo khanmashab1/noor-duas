@@ -1,3 +1,4 @@
+import { SEO } from '@/components/SEO';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useI18n } from '@/lib/i18n';
@@ -53,6 +54,7 @@ const StoriesPage = () => {
 
   return (
     <div className="min-h-screen">
+      <SEO title="Islamic Stories" description="Inspiring stories from the Quran, Seerah & lives of the Sahaba in Arabic, Urdu & English" path="/stories" />
       {/* Hero */}
       <section className="relative overflow-hidden bg-primary py-10 sm:py-16 text-primary-foreground islamic-pattern">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/90 to-primary" />
