@@ -20,6 +20,7 @@ import NamazPage from "./pages/NamazPage";
 import StoriesPage from "./pages/StoriesPage";
 import BooksPage from "./pages/BooksPage";
 import BookReaderPage from "./pages/BookReaderPage";
+import NotificationSettingsPage from "./pages/NotificationSettingsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -50,6 +51,7 @@ const App = () => (
                 <Route path="/stories" element={<StoriesPage />} />
                 <Route path="/books" element={<BooksPage />} />
                 <Route path="/books/:id" element={<BookReaderPage />} />
+                <Route path="/notifications" element={<NotificationSettingsPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
