@@ -1,4 +1,5 @@
 import { Copy, Share2, Image } from 'lucide-react';
+import { AudioPlayer } from '@/components/AudioPlayer';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
