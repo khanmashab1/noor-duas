@@ -69,6 +69,13 @@ export const HadithCard = ({ hadith }: HadithCardProps) => {
             </span>
           </div>
 
+          {/* Audio Player - TTS for Arabic + translations */}
+          <AudioPlayer
+            arabicText={hadith.arabic_text}
+            urduTranslation={hadith.urdu_translation || undefined}
+            englishTranslation={hadith.english_translation || undefined}
+          />
+
           {/* Actions */}
           <div className="flex items-center gap-1 sm:gap-2">
             <Button variant="ghost" size="sm" onClick={handleCopy} className="text-xs sm:text-sm px-2 sm:px-3">
