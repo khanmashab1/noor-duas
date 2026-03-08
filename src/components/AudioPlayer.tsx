@@ -11,7 +11,7 @@ interface AudioPlayerProps {
   englishTranslation?: string;
 }
 
-export const AudioPlayer = ({ url, arabicText }: AudioPlayerProps) => {
+export const AudioPlayer = ({ url, arabicText, urduTranslation, englishTranslation }: AudioPlayerProps) => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
