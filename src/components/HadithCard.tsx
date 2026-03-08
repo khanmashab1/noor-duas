@@ -1,4 +1,5 @@
 import { Copy, Share2, Image } from 'lucide-react';
+import { AudioPlayer } from '@/components/AudioPlayer';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -67,6 +68,13 @@ export const HadithCard = ({ hadith }: HadithCardProps) => {
               📖 {hadith.source} {hadith.hadith_number && `#${hadith.hadith_number}`}
             </span>
           </div>
+
+          {/* Audio Player - TTS for Arabic + translations */}
+          <AudioPlayer
+            arabicText={hadith.arabic_text}
+            urduTranslation={hadith.urdu_translation || undefined}
+            englishTranslation={hadith.english_translation || undefined}
+          />
 
           {/* Actions */}
           <div className="flex items-center gap-1 sm:gap-2">

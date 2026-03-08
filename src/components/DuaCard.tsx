@@ -92,7 +92,12 @@ export const DuaCard = ({ dua, showExpand = true }: DuaCardProps) => {
           )}
 
           {/* Audio Player - works with URL or on-demand TTS */}
-          <AudioPlayer url={dua.audio_url || undefined} arabicText={!dua.audio_url ? dua.arabic_text : undefined} />
+          <AudioPlayer
+            url={dua.audio_url || undefined}
+            arabicText={!dua.audio_url ? dua.arabic_text : undefined}
+            urduTranslation={!dua.audio_url ? dua.urdu_translation || undefined : undefined}
+            englishTranslation={!dua.audio_url ? dua.english_translation || undefined : undefined}
+          />
 
           {/* Expanded Content */}
           <AnimatePresence>

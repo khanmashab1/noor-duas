@@ -6,10 +6,12 @@ import { toast } from '@/hooks/use-toast';
 
 interface AudioPlayerProps {
   url?: string;
-  arabicText?: string; // For on-demand TTS
+  arabicText?: string;
+  urduTranslation?: string;
+  englishTranslation?: string;
 }
 
-export const AudioPlayer = ({ url, arabicText }: AudioPlayerProps) => {
+export const AudioPlayer = ({ url, arabicText, urduTranslation, englishTranslation }: AudioPlayerProps) => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -55,7 +57,11 @@ export const AudioPlayer = ({ url, arabicText }: AudioPlayerProps) => {
             apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
-          body: JSON.stringify({ text: arabicText }),
+          body: JSON.stringify({
+            text: arabicText,
+            urduTranslation: urduTranslation || undefined,
+            englishTranslation: englishTranslation || undefined,
+          }),
         }
       );
 
