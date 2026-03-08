@@ -6,7 +6,9 @@ import { toast } from '@/hooks/use-toast';
 
 interface AudioPlayerProps {
   url?: string;
-  arabicText?: string; // For on-demand TTS
+  arabicText?: string;
+  urduTranslation?: string;
+  englishTranslation?: string;
 }
 
 export const AudioPlayer = ({ url, arabicText }: AudioPlayerProps) => {
