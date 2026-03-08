@@ -57,7 +57,11 @@ export const AudioPlayer = ({ url, arabicText, urduTranslation, englishTranslati
             apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
-          body: JSON.stringify({ text: arabicText }),
+          body: JSON.stringify({
+            text: arabicText,
+            urduTranslation: urduTranslation || undefined,
+            englishTranslation: englishTranslation || undefined,
+          }),
         }
       );
 
